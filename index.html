@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Our Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/book.css">
+<link rel="stylesheet" href="css/games.css">
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><b></b><b></b><b></b></div>
+<div class="sparkles" id="sparkles" aria-hidden="true"></div>
+
+<!-- ============ LOGIN ============ -->
+<section id="login" class="scene" aria-label="Sign in">
+  <div class="photo-field" id="photoField" aria-hidden="true"></div>
+
+  <div class="orb-wrap" id="orbWrap">
+    <div class="orb-glow" aria-hidden="true"></div>
+    <div class="orb-glow two" aria-hidden="true"></div>
+    <div class="orb">
+      <div class="orb-face" id="orbLogin">
+        <h1 class="orb-title">Hellow</h1>
+        <p class="orb-sub">two sides, one story</p>
+        <input id="inName" class="field" type="text" placeholder="Your name" aria-label="Your name" autocomplete="nickname" maxlength="24">
+        <input id="inPass" class="field" type="password" placeholder="Secret word" aria-label="Secret word" autocomplete="off">
+        <button id="btnEnter" class="go" type="button">Step inside</button>
+        <p id="orbMsg" class="orb-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="orb-loading" id="orbLoading" aria-live="polite">
+        <div class="lh" aria-hidden="true">&#9829;</div>
+        <div class="lm" id="loadMsg">Gathering our memories&hellip;</div>
+        <div class="lp" id="loadPct">0%</div>
+      </div>
+    </div>
+    <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff8fb1"/><stop offset=".5" stop-color="#d2b4ff"/><stop offset="1" stop-color="#8fb4ff"/>
+        </linearGradient>
+      </defs>
+      <circle class="track" cx="50" cy="50" r="48"/>
+      <circle class="prog" id="ringProg" cx="50" cy="50" r="48"/>
+    </svg>
+    <div class="ring-dot" id="ringDot" aria-hidden="true"></div>
+  </div>
+
+  <div class="login-tools">
+    <button class="pill" id="btnLoginPhotos" type="button">Add our photos</button>
+    <span class="pill" id="photoCount" style="display:none"></span>
+    <button class="pill quiet" id="btnClearPhotos" type="button" style="display:none">Clear photos</button>
+    <input type="file" id="fileLogin" accept="image/*" multiple hidden>
+  </div>
+</section>
+
+<!-- ============ APP SHELL ============ -->
+<section id="app" class="scene off" aria-label="Our storybook">
+  <header class="topbar">
+    <div class="brand"><span class="h" aria-hidden="true">&#9829;</span><span id="brandName">Our Story</span></div>
+  </header>
+
+  <div class="side-menu">
+    <button class="pill" id="btnLogout" type="button">Log out</button>
+    <button class="pill" id="btnSettings" type="button">Settings</button>
+    <button class="pill" id="btnSideGames" type="button">&#127918; Games</button>
+    <button class="pill" id="btnSideMusic" type="button">&#127925; Music</button>
+  </div>
+
+  <main class="stage" id="stage">
+    <div class="book-shell" id="shell">
+      <div class="tabs" id="tabs" role="navigation" aria-label="Bookmarks"></div>
+      <div class="book" id="book">
+        <div class="board board-l"></div>
+        <div class="board board-r"></div>
+        <div class="spine"></div>
+      </div>
+    </div>
+  </main>
+  <footer class="navbar">
+    <button class="pill" id="prev" type="button">&lsaquo; Previous</button>
+    <div class="nav-label" id="navLabel" aria-live="polite">The cover</div>
+    <button class="pill" id="next" type="button">Next &rsaquo;</button>
+  </footer>
+  <input type="file" id="fileBook" accept="image/*" multiple hidden>
+</section>
+
+<!-- ============ GAMES SCREEN ============ -->
+<section id="gamesScreen" class="scene off" aria-label="Game room">
+  <header class="topbar">
+    <div class="brand"><span class="h" aria-hidden="true">&#9829;</span><span>Game Room</span></div>
+    <button class="pill" id="btnBackToBook" type="button">Back to Book</button>
+  </header>
+
+  <!-- picker (cards are generated from the GAMES list in js/games.js) -->
+  <div id="gamesContainer" class="games-grid"></div>
+
+  <!-- where the chosen game plays -->
+  <div id="gameStage" class="game-stage" hidden>
+    <div class="stage-bar">
+      <button class="pill" id="btnAllGames" type="button">&lsaquo; All games</button>
+      <h2 id="gameTitle"></h2>
+    </div>
+    <div id="gameBody" class="game-body"></div>
+  </div>
+</section>
+
+<!-- ============ MODALS & TOASTS ============ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <h2 id="mTitle"></h2>
+    <div id="mBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ MUSIC PLAYER ============ -->
+<div id="musicPlayer" class="floating-music off">
+  <button id="closeMusic" class="x-btn" type="button" aria-label="Close music">&times;</button>
+  <button id="minMusic" class="min-btn" type="button" aria-label="Minimize music">&minus;</button>
+  <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1uB1WSpITsV65IBDXfTSSB?utm_source=generator&theme=0&si=bed5f1d2e30644aa" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+
+<script src="js/helpers.js"></script>
+<script src="js/data.js"></script>
+<script src="js/book.js"></script>
+<script src="js/games.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

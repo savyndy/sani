@@ -1,0 +1,11 @@
+{
+  "name": "our-story",
+  "version": "1.0.0",
+  "description": "A private, two-sided storybook dashboard for two people: stories, photos, love notes, and a room of small games.",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve . -l 5173",
+    "dev": "npx --yes serve . -l 5173"
+  },
+  "license": "UNLICENSED"
+}
