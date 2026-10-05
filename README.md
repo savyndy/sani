@@ -1,6 +1,6 @@
 # Our Story
 
-A private, two-sided storybook dashboard for two people. It opens on a glowing
+A private, two-sided storybook dashboard for sani and tharu. It opens on a glowing
 login orb with your photos dissolving around it, then leads into a flip-page
 book with a "her" side and a "his" side, plus a separate Game Room.
 

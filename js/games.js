@@ -319,10 +319,10 @@ function mountHearts(body){
 
 /* ================= 2. Scratch & Reveal ================= */
 const COUPONS = [
-  'breakfast in bed, delivered by me', 'movie of your choice, no arguments', 'ten minute back rub', 'slow dance in the kitchen',
-  'dishes done tonight', 'handwritten love letter', 'surprise picnic', 'ice cream date, my treat', 'sleep in while I handle the morning',
-  'wish granted (within reason)', 'song dedicated to you', 'cuddle marathon, phones away', 'your favorite meal, cooked by me',
-  'long walk holding hands', 'game night where you get to pick', 'one honest compliment for every hour of the day'
+  'tharu loves sani so so muchhhhh', 'movie of your choice, no arguments', 'ten minute back rub', 'High-tea date',
+  'I love youuuu my loveyyy', 'Sani is the BESTTTTT', 'surprise picnic', 'ice cream date, my treat', 'ice cream date, your treat',
+  'FRIES DATEEEEEE', 'LETS EAT FRIESSSS', 'cuddle marathon, phones away', 'Staring context',
+  'long walk holding hands', 'Movie night where you get to pick', 'one honest compliment for every hour of the day'
 ];
 function mountScratch(body){
   body.innerHTML =
