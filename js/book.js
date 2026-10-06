@@ -5,12 +5,14 @@ const bookEl = $('#book'), shell = $('#shell'), tabsEl = $('#tabs');
 const book = { S:[], sec:{}, leaves:[], c:0, maxC:0, single:false, pw:400, ph:560, s:1 };
 let built = false, userTouched = false;
 
+/* Dyed-ribbon bookmarks. Each colour is checked to at least 4.5:1 against its
+   own label, since the tab text is bold 13.5px and so not "large text". */
 const TABS = [
-  { id:'stories',  label:'Stories',    short:'Stories', e:'\uD83D\uDCD6', bg:'#c2456d', fg:'#fff' },
-  { id:'memories', label:'Memories',   short:'Photos',  e:'\uD83D\uDCF8', bg:'#7a58c8', fg:'#fff' },
-  { id:'notes',    label:'Love notes', short:'Notes',   e:'\uD83D\uDC8C', bg:'#e6bf66', fg:'#3a2a10' },
-  { id:'movies',   label:'Movies',     short:'Movies',  e:'\uD83C\uDF7F', bg:'#8a4a12', fg:'#fff' },
-  { id:'dates',    label:'Dates',      short:'Dates',   e:'\uD83C\uDF39', bg:'#e58fb0', fg:'#3a2a10' }
+  { id:'stories',  label:'Stories',    short:'Stories', e:'\uD83D\uDCD6', bg:'#a32a5e', fg:'#fffafd' },
+  { id:'memories', label:'Memories',   short:'Photos',  e:'\uD83D\uDCF8', bg:'#5b3496', fg:'#fffafd' },
+  { id:'notes',    label:'Love notes', short:'Notes',   e:'\uD83D\uDC8C', bg:'#d9a441', fg:'#2a2213' },
+  { id:'movies',   label:'Movies',     short:'Movies',  e:'\uD83C\uDF7F', bg:'#7a2a6e', fg:'#fffafd' },
+  { id:'dates',    label:'Dates',      short:'Dates',   e:'\uD83C\uDF39', bg:'#c0427e', fg:'#fffafd' }
 ];
 const SEC_LABEL = { cover:'The cover', intro:'Contents', stories:'Stories', memories:'Memories', notes:'Love notes', movies:'Movies', dates:'Dates', end:'The end' };
 
@@ -125,33 +127,33 @@ function pageNotes(side){
 
 /* ---- movies ---- */
 function movieCard(m, listName, withMove){
-  const img = m.thumb ? '<img src="' + esc(m.thumb) + '" alt="" style="width: 100%; height: 140px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px;">' : '';
+  const img = m.thumb ? '<img class="thumb" src="' + esc(m.thumb) + '" alt="">' : '';
   const shown = m.link && m.thumb ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener noreferrer">' + img + '</a>' : img;
-  const linkOnly = m.link && !m.thumb ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener noreferrer" style="font-size:.8em;text-align:center;color:var(--ac-deep)">Open link</a>' : '';
-  return '<div class="note" style="--r:' + hashRot(m.id, 1).toFixed(1) + 'deg; padding: 10px; display: flex; flex-direction: column;">' +
+  const linkOnly = m.link && !m.thumb ? '<a class="ml" href="' + esc(m.link) + '" target="_blank" rel="noopener noreferrer">Open link</a>' : '';
+  return '<div class="note movie-card" style="--r:' + hashRot(m.id, 1).toFixed(1) + 'deg">' +
     '<button class="x" type="button" data-act="del-movie" data-id="' + m.id + '" data-list="' + listName + '" aria-label="Delete">&times;</button>' + shown +
-    '<p style="margin: 0; font-weight: bold; font-size: 0.9em; text-align: center; line-height: 1.2;">' + (withMove ? '\uD83C\uDF7F ' : '\uD83C\uDFAC ') + esc(m.title) + '</p>' + linkOnly +
-    (withMove ? '<div style="margin-top:auto; padding-top: 10px;"><button class="btn solid" style="font-size:10px; padding:0.4em; width: 100%;" type="button" data-act="move-movie" data-id="' + m.id + '">Mark watched</button></div>' : '') +
+    '<p class="mt">' + esc(m.title) + '</p>' + linkOnly +
+    (withMove ? '<div class="mact"><button class="btn solid" type="button" data-act="move-movie" data-id="' + m.id + '">Mark watched</button></div>' : '') +
     '</div>';
 }
 function pageWatchlist() {
   const list = db.watchlist || [];
   const body = list.length
-    ? '<div class="scroll"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px;">' + list.map(m => movieCard(m, 'watchlist', true)).join('') + '</div></div>'
-    : '<div class="empty"><p class="soft">Nothing in the watchlist yet.</p></div>';
+    ? '<div class="scroll"><div class="card-grid">' + list.map(m => movieCard(m, 'watchlist', true)).join('') + '</div></div>'
+    : '<div class="empty"><p class="soft">Nothing on the list yet. Add the one you keep meaning to watch.</p></div>';
   return { tone: 'her', html:
-    '<div class="page"><div class="page-head"><span class="chip">To Watch</span><span class="count">' + list.length + '</span></div>' +
-    '<h3 class="pg-title">Movie Night Ideas</h3>' + body +
+    '<div class="page"><div class="page-head"><span class="chip">To watch</span><span class="count">' + list.length + '</span></div>' +
+    '<h3 class="pg-title">Movie nights, planned</h3>' + body +
     '<div class="page-foot"><button class="btn solid" type="button" data-act="new-movie">Add a movie</button></div></div>' };
 }
 function pageWatched() {
   const list = db.watched || [];
   const body = list.length
-    ? '<div class="scroll"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px;">' + list.map(m => movieCard(m, 'watched', false)).join('') + '</div></div>'
-    : '<div class="empty"><p class="soft">No movies watched yet.</p></div>';
+    ? '<div class="scroll"><div class="card-grid">' + list.map(m => movieCard(m, 'watched', false)).join('') + '</div></div>'
+    : '<div class="empty"><p class="soft">Nothing watched yet. Mark one off the list and it lands here.</p></div>';
   return { tone: 'his', html:
     '<div class="page"><div class="page-head"><span class="chip">Watched</span><span class="count">' + list.length + '</span></div>' +
-    '<h3 class="pg-title">Movies We Watched</h3>' + body +
+    '<h3 class="pg-title">Ones we have seen</h3>' + body +
     '</div>' };
 }
 
@@ -162,20 +164,23 @@ function pageDates(side) {
   const list = all.filter((_, i) => (i % 2 === 0) === (side === 'her'));
   const body = list.length
     ? '<div class="scroll"><div class="notes">' + list.map(d => {
-      const img = d.thumb ? '<img src="' + esc(d.thumb) + '" alt="" style="width: 100%; height: 100px; object-fit: cover; border-radius: 6px; display: block;">' : '<div style="width:100%; height:100px; background:rgba(0,0,0,0.05); border-radius:6px;"></div>';
-      const playBtn = d.link ? '<a href="' + esc(d.link) + '" target="_blank" rel="noopener noreferrer" aria-label="Open link" style="width: 44px; height: 44px; border-radius: 50%; background: #2f9e5c; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">&#9658;</a>' : '<div style="width: 44px; height: 44px;"></div>';
-      return '<div class="note" style="--r:' + hashRot(d.id, 1).toFixed(1) + 'deg; padding: 12px; display: flex; gap: 16px; align-items: center;">' +
+      const img = d.thumb
+        ? '<img class="dthumb" src="' + esc(d.thumb) + '" alt="">'
+        : '<div class="dthumb"></div>';
+      const playBtn = d.link
+        ? '<a class="dplay" href="' + esc(d.link) + '" target="_blank" rel="noopener noreferrer" aria-label="Open link">&#9658;</a>'
+        : '<div class="dplay off" aria-hidden="true"></div>';
+      return '<div class="note date-row" style="--r:' + hashRot(d.id, 1).toFixed(1) + 'deg">' +
              '<button class="x" type="button" data-act="del-date" data-id="' + d.id + '" aria-label="Delete">&times;</button>' +
-             '<div style="flex: 1;">' + img + '</div>' +
-             '<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 70px;">' + playBtn +
-             '<span style="font-size: 0.85em; font-weight: 700; color: var(--paper-ink); text-align: center;">' + esc(fmtDate(d.date)) + '</span></div>' +
+             img +
+             '<div class="dmeta">' + playBtn + '<span class="dwhen">' + esc(fmtDate(d.date)) + '</span></div>' +
              '</div>';
     }).join('') + '</div></div>'
-    : '<div class="empty"><p class="soft">No dates logged yet.</p></div>';
+    : '<div class="empty"><p class="soft">No days logged yet. Add one and it keeps its place here.</p></div>';
 
   return { tone: side, html:
     '<div class="page"><div class="page-head"><span class="chip">Time we spent</span><span class="count">' + list.length + '</span></div>' +
-    '<h3 class="pg-title">Our Dates</h3>' + body +
+    '<h3 class="pg-title">Days worth keeping</h3>' + body +
     '<div class="page-foot"><button class="btn solid" type="button" data-act="new-date">Add a date</button></div></div>' };
 }
 
@@ -298,15 +303,85 @@ function updateChrome(){
   });
 }
 
+/* ---------- dust dissolve ----------
+   The three phases never overlap: ink leaves, THEN the paper turns, THEN the new
+   ink arrives. A multi-page jump dissolves out once, flips as many leaves as it
+   needs, and dissolves in once at the destination, rather than strobing on every
+   intermediate page. */
+const DUST_OUT = 720, DUST_IN = 1500, FLIP_MS = 1250;
+
+function visibleContent(){
+  const faces = [];
+  const cur = book.leaves[book.c], prev = book.leaves[book.c - 1];
+  if (cur) faces.push(cur.firstChild);
+  if (prev && !book.single) faces.push(prev.lastChild);
+  return faces.map(f => f && ($('.page', f) || $('.cover-inner', f))).filter(Boolean);
+}
+const allContent = () => $$('.page, .cover-inner', bookEl);
+
+/* cursor.js owns the particle pool and canvas; this just says where and which way */
+function dustFrom(node, dir){
+  if (typeof window.pageDust !== 'function') return;
+  const r = node.getBoundingClientRect();
+  if (r.width < 4 || r.height < 4) return;
+  window.pageDust(r, dir, 90);
+}
+
+async function dustOut(){
+  if (reduceMotion) return;
+  const going = visibleContent();
+  going.forEach(n => {
+    clearTimeout(n._dt);
+    n.classList.remove('dust-in', 'dust-out', 'dust-hidden');
+    void n.offsetWidth;                       /* restart the animation */
+    n.classList.add('dust-out');
+    dustFrom(n, 1);
+  });
+  await sleep(DUST_OUT);
+  /*
+    Hide the ink on every OTHER page before the paper starts moving.
+
+    Without this the incoming page was simply sitting there fully rendered: the
+    leaf rotated, revealed a page nobody had dissolved, and then dust-in began by
+    masking it away, so it appeared and then vanished before assembling. The
+    arriving page has to be empty for the whole turn, and only then dust in.
+  */
+  allContent().forEach(n => { if (!n.classList.contains('dust-out')) n.classList.add('dust-hidden'); });
+}
+
+function dustIn(){
+  if (reduceMotion) return;
+  /* clear both holds in the same task as adding dust-in, so there is never a
+     frame where unmasked ink is on screen */
+  allContent().forEach(n => n.classList.remove('dust-out', 'dust-hidden'));
+  visibleContent().forEach(n => {
+    clearTimeout(n._dt);
+    n.classList.remove('dust-in');
+    void n.offsetWidth;
+    n.classList.add('dust-in');
+    dustFrom(n, -1);
+    n._dt = setTimeout(() => n.classList.remove('dust-in'), DUST_IN + 150);
+  });
+}
+
 let navToken = 0;
 async function goTo(target){
   target = clamp(target, 0, book.maxC);
+  if (book.c === target) return;
   const token = ++navToken;
+
+  await dustOut();
+  if (token !== navToken) return;
+
   while (book.c !== target){
     if (token !== navToken) return;
     flipStep(target > book.c ? 1 : -1);
-    if (book.c !== target) await sleep(reduceMotion ? 10 : 140);
+    if (book.c !== target) await sleep(reduceMotion ? 10 : 190);
   }
+
+  await sleep(reduceMotion ? 10 : FLIP_MS * 0.78);
+  if (token !== navToken) return;
+  dustIn();
 }
 function flipStep(dir){
   const i = dir > 0 ? book.c : book.c - 1;
@@ -315,8 +390,24 @@ function flipStep(dir){
   leaf.classList.add('turning');
   book.c += dir; leaf.classList.toggle('flipped', dir > 0);
   updateChrome();
+  /*
+    Settle exactly when the transform finishes rather than on a 1000ms timer.
+    The old timer fired 50ms after the .95s transition, so for those 50ms the
+    leaf had stopped moving but was still elevated and still had `turning` on it;
+    dropping the z-index then re-stacked an already-settled page and read as a
+    shudder at the end of every flip. The timeout is kept only as a fallback for
+    the case where the transition never fires (display:none, reduced motion).
+  */
   clearTimeout(leaf._t);
-  leaf._t = setTimeout(() => { leaf.classList.remove('turning'); restZ(leaf, i); }, 1000);
+  const settle = () => {
+    clearTimeout(leaf._t);
+    leaf.removeEventListener('transitionend', onEnd);
+    leaf.classList.remove('turning');
+    restZ(leaf, i);
+  };
+  function onEnd(e){ if (e.target === leaf && e.propertyName === 'transform') settle(); }
+  leaf.addEventListener('transitionend', onEnd);
+  leaf._t = setTimeout(settle, FLIP_MS + 150);
 }
 const goSection = id => { userTouched = true; goTo(cFromSide(book.sec[id])); };
 

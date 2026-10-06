@@ -1,49 +1,93 @@
 
 /* ---------- Tokens ---------- */
+/*
+  Palette: a light-pink ground, pink on her side, violet on his, deeper violet
+  for actions, and gold as the single metal. One analogous hue family on purpose.
+  No three-stop gradients anywhere: colour comes from flat fields and the
+  ambient washes, not from sweeps across unrelated hues.
+
+  Dark mode flips the CHROME only. The book's own pages stay paper, because a
+  glowing page reads as a screen and the whole point is that this reads as an
+  object. So the --*-paper, --*-deep and --paper-* tokens barely move.
+*/
 :root{
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
   --serif:"Fraunces","Iowan Old Style","Palatino Linotype",Georgia,serif;
-  --sans:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --sans:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 
-  --rose:#e8718c; --rose-deep:#b23a5e; --rose-soft:#ffe3ea; --rose-paper:#fff0f3;
-  --blue:#5b8af0; --blue-deep:#2b4fb0; --blue-soft:#dfe9ff; --blue-paper:#edf2ff;
-  --lilac:#b79cf0; --gold:#d9b25f;
+  /* Fraunces axis sets. Always declare AFTER a `font:` shorthand, which resets
+     font-variation-settings, and always name every axis, which does not inherit partially. */
+  --fvs-display:"opsz" 120,"wght" 600,"SOFT" 48,"WONK" 1;
+  --fvs-title:"opsz" 54,"wght" 600,"SOFT" 42,"WONK" 1;
+  --fvs-lede:"opsz" 24,"wght" 400,"SOFT" 34,"WONK" 1;
+  --fvs-body:"opsz" 14,"wght" 400,"SOFT" 22,"WONK" 0;
 
-  --bg-1:#ffdbe7; --bg-2:#ece6ff; --bg-3:#d3e4ff;
-  --ink:#3c2842; --ink-soft:#6b5776;
-  --card:rgba(255,255,255,.82); --card-solid:#ffffff; --line:rgba(60,40,66,.16);
-  --orb-fill:rgba(255,255,255,.44); --orb-edge:rgba(255,255,255,.9);
-  --field-bg:rgba(255,255,255,.75); --field-ink:#3c2842;
-  --spark-glow:rgba(226,96,140,.65);
-  --aurora-o:.5;
-  --focus:#6a4de0;
-  --paper-ink:#3b2a3f; --paper-soft:#7a6480;
+  /* her side is pink, his side is violet: one analogous family rather than
+     four competing hues, which is what made the earlier palette read as rainbow */
+  --rose:#d4588a; --rose-deep:#a32a5e; --rose-soft:#fad9e6; --rose-paper:#fff4f8;
+  --blue:#8a5fc8; --blue-deep:#5b3496; --blue-soft:#e6daf7; --blue-paper:#f8f3fe;
+  --iris:#a06ad8; --iris-deep:#6b3aa8; --iris-soft:#ebdffa;
+  /* gold stays as the single metal: it is the one warm note that keeps a
+     pink-and-violet scheme from going cold */
+  --brass:#c9922e;
+  /* hover for solid buttons: darker in light, lighter in dark, so the direction
+     of travel is always "more prominent" */
+  --iris-press:#552c88;
+  /* the lit state in the side rail: must adapt, since a violet dark enough
+     to read on paper disappears against the dark plaque */
+  --rail-on:#6b3aa8;
+  /* one ink for every game card mark, so the grounds vary and the marks
+     do not. It sits on pale plates in both themes, so it does not flip. */
+  --art-ink:rgba(72,34,86,.80);
+
+  --bg-1:#f9cfe2; --bg-2:#fbe9f1; --bg-3:#e2d2f5;
+  --ink:#3a2340; --ink-soft:#6e5578;
+  --card:rgba(255,250,253,.88); --card-solid:#fffafd; --line:rgba(58,35,64,.15);
+  --orb-fill:rgba(255,250,253,.46); --orb-edge:rgba(255,255,255,.9);
+  --field-bg:rgba(255,255,255,.76); --field-ink:#3a2340;
+  --spark-glow:rgba(212,88,138,.65);
+  --aurora-o:.55;
+  --focus:#6b3aa8;
+  --paper-ink:#3a2340; --paper-soft:#75657e;
+  --bind-1:#3e1548; --bind-2:#2a1250;
   color-scheme:light;
 }
+
+/*
+  Dark is a deep violet night. The mid-tone accents are lifted here because they
+  sit on dark ground and need luminance, while the *-deep tones and the *-paper
+  stock stay put: those are still ink printed on light paper inside the book.
+*/
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg-1:#2c1033; --bg-2:#120f30; --bg-3:#0b1a40;
-    --ink:#f6ebf8; --ink-soft:#c8b4d3;
-    --card:rgba(31,24,54,.86); --card-solid:#221a3a; --line:rgba(255,255,255,.18);
-    --orb-fill:rgba(28,18,56,.5); --orb-edge:rgba(255,255,255,.32);
-    --field-bg:rgba(255,255,255,.12); --field-ink:#ffffff;
-    --spark-glow:rgba(255,255,255,.8);
-    --aurora-o:.36; --focus:#b9a4ff;
-    --rose-paper:#f8e2e8; --blue-paper:#e0e9fb;
+    --bg-1:#3a0e3f; --bg-2:#1a0e2e; --bg-3:#241046;
+    --ink:#f4e8f6; --ink-soft:#bfa8cc;
+    --card:rgba(36,26,58,.9); --card-solid:#241a3a; --line:rgba(244,232,246,.18);
+    --orb-fill:rgba(26,14,46,.5); --orb-edge:rgba(244,232,246,.36);
+    --field-bg:rgba(244,232,246,.12); --field-ink:#f4e8f6;
+    --spark-glow:rgba(240,168,208,.85);
+    --aurora-o:.5; --focus:#c9a8f0;
+    --rose:#f08ab4; --blue:#b38ce8; --iris:#c0a0f0; --brass:#e8c169;
+    --iris-deep:#7a48ba; --iris-press:#9060d0; --rail-on:#c0a0f0;
+    --rose-paper:#fdeef4; --blue-paper:#f3eefc; --iris-soft:#3b2a63;
+    --bind-1:#2e1038; --bind-2:#1f0d3c;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg-1:#2c1033; --bg-2:#120f30; --bg-3:#0b1a40;
-  --ink:#f6ebf8; --ink-soft:#c8b4d3;
-  --card:rgba(31,24,54,.86); --card-solid:#221a3a; --line:rgba(255,255,255,.18);
-  --orb-fill:rgba(28,18,56,.5); --orb-edge:rgba(255,255,255,.32);
-  --field-bg:rgba(255,255,255,.12); --field-ink:#ffffff;
-  --spark-glow:rgba(255,255,255,.8);
-  --aurora-o:.36; --focus:#b9a4ff;
-  --rose-paper:#f8e2e8; --blue-paper:#e0e9fb;
+  --bg-1:#3a0e3f; --bg-2:#1a0e2e; --bg-3:#241046;
+  --ink:#f4e8f6; --ink-soft:#bfa8cc;
+  --card:rgba(36,26,58,.9); --card-solid:#241a3a; --line:rgba(244,232,246,.18);
+  --orb-fill:rgba(26,14,46,.5); --orb-edge:rgba(244,232,246,.36);
+  --field-bg:rgba(244,232,246,.12); --field-ink:#f4e8f6;
+  --spark-glow:rgba(240,168,208,.85);
+  --aurora-o:.5; --focus:#c9a8f0;
+  --rose:#f08ab4; --blue:#b38ce8; --iris:#c0a0f0; --brass:#e8c169;
+  --iris-deep:#7a48ba; --iris-press:#9060d0; --rail-on:#c0a0f0;
+  --rose-paper:#fdeef4; --blue-paper:#f3eefc; --iris-soft:#3b2a63;
+  --bind-1:#2e1038; --bind-2:#1f0d3c;
   color-scheme:dark;
 }
 
@@ -52,23 +96,90 @@
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{
   height:100%;margin:0;position:relative;overflow:hidden;
-  font-family:var(--sans);color:var(--ink);
+  font-family:var(--sans);color:var(--ink);font-size:16px;
   background:
     radial-gradient(1100px 800px at 12% 8%,var(--bg-1),transparent 62%),
     radial-gradient(1000px 900px at 92% 92%,var(--bg-3),transparent 62%),
     var(--bg-2);
 }
 [hidden]{display:none!important}
-button{font-family:inherit;color:inherit;cursor:pointer}
+
+/*
+  No scrollbar chrome anywhere. This is a keepsake, not a document viewer, and
+  a native track cutting down the right edge broke the illusion of the book
+  sitting in a room. Everything still scrolls: wheel, drag, touch and keyboard
+  are untouched, only the furniture is gone.
+*/
+*{scrollbar-width:none}
+*::-webkit-scrollbar{width:0;height:0}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+/*
+  No text selection anywhere: stray blue highlights break the illusion that this
+  is an object rather than a web page, and dragging a page to turn it would
+  otherwise select the paragraph under the pointer instead.
+  Form fields are the exception, because you cannot edit what you cannot select.
+*/
+body{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text}
+
+/* ---------- Cursor ---------- */
+/*
+  A four-point glint instead of the system arrow. Both variants carry a dark
+  outline as well as a light core so they stay visible on the pale pink ground
+  AND on the deep violet one. Size is 26px because platforms quietly ignore
+  large cursor images, and the hotspot sits at the centre since the glyph is
+  symmetric.
+
+  Exactly two cursors exist in this app: idle, and the gold one over anything
+  you can act on. No I-beam over text, no grab hand, no system arrow on
+  disabled controls. The universal `cursor:inherit` below is what enforces that:
+  it strips the UA stylesheet's own cursor choices (inputs would otherwise show
+  an I-beam) and makes every element take the value from its parent instead.
+*/
+:root{
+  --cur-idle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M13 1.6c.9 5.5 2 6.6 7.5 7.5-5.5.9-6.6 2-7.5 7.5-.9-5.5-2-6.6-7.5-7.5 5.5-.9 6.6-2 7.5-7.5z' transform='translate(0 3.4)' fill='%23fff' stroke='%23a32a5e' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='20.4' cy='5.2' r='2' fill='%23fff' stroke='%23a32a5e' stroke-width='1.3'/%3E%3C/svg%3E") 13 13;
+  --cur-act:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14 1.8c1 6 2.2 7.2 8.2 8.2-6 1-7.2 2.2-8.2 8.2-1-6-2.2-7.2-8.2-8.2 6-1 7.2-2.2 8.2-8.2z' transform='translate(0 3.8)' fill='%23c9922e' stroke='%23552c88' stroke-width='1.7' stroke-linejoin='round'/%3E%3Ccircle cx='22' cy='5.6' r='2.3' fill='%23f8b8d2' stroke='%23552c88' stroke-width='1.4'/%3E%3C/svg%3E") 14 14;
+}
+html{cursor:var(--cur-idle),auto}
+*,*::before,*::after,::file-selector-button{cursor:inherit}
+a,button,summary,label,[role="button"],[data-act],[data-nav],[data-tab],[data-side-pick],[data-theme-pick],
+.pill,.btn,.m-btn,.g-btn,.seg-b,.tab,.toc-row,.pol,.mm-card,.ttt-cell,.qd-side,.aura,.game-card,.edge,.cover,
+.wy-opt,.qz-opt,.scratch-cv,input[type="file"],input[type="date"],input[type="radio"],input[type="checkbox"],
+::file-selector-button{
+  cursor:var(--cur-act),pointer;
+}
+/* not actionable, so these fall back to the idle glint rather than a system arrow */
+.cover.back-cover,:disabled,[aria-disabled="true"],.pol.blank{cursor:var(--cur-idle),default}
+button{font-family:inherit;color:inherit}
+
+/* the glitter trail canvas; never interactive, always on top */
+#sparkTrail{position:fixed;inset:0;z-index:9999;pointer-events:none}
+
+/*
+  These three blobs are by far the biggest coloured area on screen, so they set
+  the overall impression: saturated pinks and violets, not tints.
+
+  Blur radius is also the most expensive number on this page, since cost scales
+  with radius AND painted area. This was 90px over 58vmax three times over, which
+  was the bulk of the login screen's paint cost; 60px over 46vmax reads almost
+  identically for much less.
+*/
 .aurora{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.aurora b{position:absolute;width:58vmax;height:58vmax;border-radius:50%;filter:blur(90px);opacity:var(--aurora-o);animation:drift 30s ease-in-out infinite alternate}
-.aurora b:nth-child(1){left:-18vmax;top:-20vmax;background:#ff8fb1}
-.aurora b:nth-child(2){right:-20vmax;bottom:-22vmax;background:#7ea6ff;animation-delay:-9s}
-.aurora b:nth-child(3){left:28vw;top:30vh;width:40vmax;height:40vmax;background:#c3a6ff;animation-delay:-16s}
-@keyframes drift{to{transform:translate(6vmax,4vmax) scale(1.12)}}
+.aurora b{position:absolute;width:46vmax;height:46vmax;border-radius:50%;filter:blur(60px);opacity:var(--aurora-o);animation:drift 38s ease-in-out infinite alternate}
+.aurora b:nth-child(1){left:-14vmax;top:-16vmax;background:#f2a2c8}
+.aurora b:nth-child(2){right:-16vmax;bottom:-18vmax;background:#b78ae4;animation-delay:-12s}
+.aurora b:nth-child(3){left:30vw;top:32vh;width:32vmax;height:32vmax;background:#e878a8;animation-delay:-21s}
+:root[data-theme="dark"] .aurora b:nth-child(1){background:#7a1e6b}
+:root[data-theme="dark"] .aurora b:nth-child(2){background:#4a2090}
+:root[data-theme="dark"] .aurora b:nth-child(3){background:#9c2a5e}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .aurora b:nth-child(1){background:#7a1e6b}
+  :root:not([data-theme="light"]) .aurora b:nth-child(2){background:#4a2090}
+  :root:not([data-theme="light"]) .aurora b:nth-child(3){background:#9c2a5e}
+}
+@keyframes drift{to{transform:translate(5vmax,3vmax) scale(1.1)}}
 
 .sparkles{position:fixed;inset:0;pointer-events:none;z-index:0}
 .sparkles i{position:absolute;width:calc(3px*var(--z));height:calc(3px*var(--z));border-radius:50%;background:#fff;box-shadow:0 0 9px 2px var(--spark-glow);opacity:0;animation:twinkle var(--d) ease-in-out var(--dl) infinite}
@@ -87,16 +198,16 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(20,8,36,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadein .25s}
 @keyframes fadein{from{opacity:0}}
 .modal-card{
-  width:min(480px,100%);max-height:calc(100% - 16px);overflow-y:auto;padding:22px;border-radius:22px;background:var(--card-solid);color:var(--ink);
-  border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.4);
+  width:min(480px,100%);max-height:calc(100% - 16px);overflow-y:auto;padding:24px;border-radius:12px;background:var(--card-solid);color:var(--ink);
+  border:1px solid var(--line);border-top:3px solid var(--brass);box-shadow:0 30px 80px rgba(28,10,40,.42);
 }
-.modal-card h2{margin:0 0 14px;font:italic 600 26px/1.1 var(--serif)}
-.m-field{display:block;margin-bottom:12px;font:700 13px var(--sans);color:var(--ink-soft)}
+.modal-card h2{margin:0 0 14px;font:italic 600 30px/1.08 var(--serif);font-variation-settings:var(--fvs-title);letter-spacing:-.005em}
+.m-field{display:block;margin-bottom:13px;font:700 14px var(--sans);color:var(--ink-soft);letter-spacing:.01em}
 .m-field input,.m-field textarea{
-  display:block;width:100%;margin-top:5px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);
-  background:transparent;color:var(--ink);font:400 16px/1.4 var(--sans);
+  display:block;width:100%;margin-top:6px;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);
+  background:transparent;color:var(--ink);font:400 16.5px/1.45 var(--sans);
 }
-.m-field textarea{resize:vertical;min-height:130px;font-family:var(--serif)}
+.m-field textarea{resize:vertical;min-height:140px;font:italic 400 18px/1.6 var(--serif);font-variation-settings:var(--fvs-body)}
 .m-field input:focus-visible,.m-field textarea:focus-visible{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 35%,transparent)}
 .m-field input[type="file"]::file-selector-button {
   padding: .5em 1em;
@@ -105,36 +216,45 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   background: transparent;
   color: var(--ink);
   font: 700 13px var(--sans);
-  cursor: pointer;
+  cursor: var(--cur-act), pointer;
   margin-right: 12px;
 }
 .m-field input[type="file"]::file-selector-button:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-.m-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px}
-.m-btn{padding:.6em 1.2em;border-radius:999px;border:1.5px solid var(--line);background:transparent;font:700 14px var(--sans);color:var(--ink)}
-.m-btn.solid{background:linear-gradient(100deg,#c4426b,#7a58c8 60%,#3f68cf);border-color:transparent;color:#fff}
-.m-btn.armed{background:#b3261e;border-color:transparent;color:#fff}
-.m-seg{display:flex;gap:8px;margin-bottom:14px}
-.m-seg button{flex:1;padding:.6em;border-radius:999px;border:1.5px solid var(--line);background:transparent;font:700 14px var(--sans);color:var(--ink)}
-.m-seg button[aria-pressed="true"].her{background:var(--rose-deep);border-color:transparent;color:#fff}
-.m-seg button[aria-pressed="true"].his{background:var(--blue-deep);border-color:transparent;color:#fff}
-.m-hint{margin:-4px 0 12px;font:400 13px/1.4 var(--sans);color:var(--ink-soft)}
+.m-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+.m-btn{padding:.62em 1.25em;border-radius:8px;border:1.5px solid var(--line);background:transparent;font:700 15px var(--sans);color:var(--ink);transition:background .2s,border-color .2s}
+.m-btn:hover{border-color:var(--iris);background:var(--iris-soft)}
+/* flat violet with a gold hairline, in place of the old three-stop gradient */
+.m-btn.solid{background:var(--iris-deep);border-color:transparent;color:#fffafd;box-shadow:inset 0 0 0 1px rgba(201,146,46,.45)}
+.m-btn.solid:hover{background:var(--iris-press);border-color:transparent}
+.m-btn.armed,.m-btn.armed:hover{background:#9c3a2e;border-color:transparent;color:#fff}
+.m-seg{display:flex;gap:8px;margin-bottom:15px}
+.m-seg button{flex:1;padding:.62em;border-radius:8px;border:1.5px solid var(--line);background:transparent;font:700 15px var(--sans);color:var(--ink)}
+.m-seg button[aria-pressed="true"].her{background:var(--rose-deep);border-color:transparent;color:#fffafd}
+.m-seg button[aria-pressed="true"].his{background:var(--blue-deep);border-color:transparent;color:#fffafd}
+.m-hint{margin:-3px 0 13px;font:400 14.5px/1.5 var(--sans);color:var(--ink-soft)}
+/* a plain opt-in row, sized to sit with .m-field rather than shout over it */
+.m-check{display:flex;align-items:center;gap:10px;margin:2px 0 7px;font:700 15px var(--sans);color:var(--ink)}
+.m-check input{width:19px;height:19px;flex:none;accent-color:var(--iris-deep);margin:0}
+.m-check span{line-height:1.2}
 .opt-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .opt-row input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--rose-deep);flex:none}
 .opt-row input[type=text]{margin:0;flex:1}
 .lb-img{display:block;width:100%;max-height:52vh;object-fit:contain;border-radius:10px;background:rgba(0,0,0,.06);margin-bottom:12px}
 .toast{
   position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:60;
-  max-width:min(92vw,420px);padding:.7em 1.2em;border-radius:999px;background:var(--card-solid);color:var(--ink);border:1px solid var(--line);
-  font:700 14px/1.3 var(--sans);box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;text-align:center;
+  max-width:min(92vw,440px);padding:.75em 1.3em;border-radius:10px;background:var(--card-solid);color:var(--ink);
+  border:1px solid var(--line);border-left:3px solid var(--brass);
+  font:600 15.5px/1.35 var(--sans);box-shadow:0 12px 30px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;text-align:center;
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 @media (max-width:520px){
-  .topbar{padding:10px 14px}.brand{font-size:21px}
+  .topbar{padding:10px 14px}.brand{font-size:24px}
   .pill{padding:.5em .9em}
-  .nav-label{min-width:100px;font-size:17px}
+  .nav-label{min-width:100px;font-size:18px}
+  .modal-card h2{font-size:26px}
 }
 @media (prefers-reduced-motion:reduce){
   .ph{animation:none;opacity:.85}
@@ -150,11 +270,13 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   z-index: 100;
   background: var(--card-solid);
   padding: 12px;
-  border-radius: 18px;
+  border-radius: 12px;
   border: 1px solid var(--line);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  border-top: 3px solid var(--brass);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.26);
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
+@media (max-width:520px){ .floating-music{ left:12px; right:12px; width:auto } }
 .floating-music.off {
   opacity: 0;
   pointer-events: none;
@@ -175,7 +297,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   display: grid;
   place-items: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  cursor: pointer;
+  cursor: var(--cur-act), pointer;
   padding: 0;
 }
 .floating-music .x-btn { right: -12px; }
@@ -189,9 +311,10 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   opacity: 0;
 }
 .floating-music.minimized::after {
-  content: 'Now Playing...';
+  content: 'Now playing';
   color: var(--ink);
-  font: 700 14px var(--sans);
+  font: italic 600 16px var(--serif);
+  font-variation-settings: var(--fvs-lede);
   display: block;
   text-align: center;
 }

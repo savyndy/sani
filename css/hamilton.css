@@ -1,0 +1,63 @@
+/*
+  The Hamilton easter egg: opt-in from Settings, off by default.
+
+  He drives on two independent properties so nothing collides. `translate`
+  carries him across the screen and `scale` flips him to face the way he is
+  going, which works because individual transform properties compose on
+  their own rather than overwriting one `transform` string. The head is a
+  separate image so it can wiggle without touching the car at all.
+*/
+
+#hamilton{
+  position:fixed;
+  left:0;
+  bottom:calc(-2px + env(safe-area-inset-bottom,0px));
+  z-index:30;
+  width:var(--ham-w);
+  pointer-events:none;
+  will-change:translate;
+  translate:calc(-1 * var(--ham-w)) 0;
+  animation:ham-drive var(--ham-dur) linear infinite,
+            ham-face var(--ham-dur) steps(1) infinite;
+}
+
+:root{ --ham-w:clamp(148px,21vw,264px); --ham-dur:19s; }
+
+#hamilton img{display:block;width:100%;height:auto}
+
+/* the car asset is 520x143 and the head sits at x=261,y=0,w=36 within it */
+#hamilton .ham-head{
+  position:absolute;
+  left:50.19%;
+  top:0;
+  width:6.92%;
+  transform-origin:50% 88%;
+  animation:ham-wiggle .62s ease-in-out infinite alternate;
+}
+
+@keyframes ham-drive{
+  0%   { translate:calc(-1 * var(--ham-w)) 0 }
+  50%  { translate:100vw 0 }
+  100% { translate:calc(-1 * var(--ham-w)) 0 }
+}
+
+/* the photo faces left, so travelling right is the mirrored half */
+@keyframes ham-face{
+  0%,49.9% { scale:-1 1 }
+  50%,100% { scale:1 1 }
+}
+
+@keyframes ham-wiggle{
+  from{ transform:rotate(-9deg) }
+  to  { transform:rotate(9deg) }
+}
+
+/* he is a gift, not a nuisance: gentler and slower when motion is reduced */
+@media (prefers-reduced-motion:reduce){
+  :root{ --ham-dur:46s }
+  #hamilton .ham-head{ animation-duration:2.4s }
+  @keyframes ham-wiggle{
+    from{ transform:rotate(-3deg) }
+    to  { transform:rotate(3deg) }
+  }
+}

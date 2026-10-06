@@ -4,3 +4,7 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+
+# compiled python from tools/
+__pycache__/
+*.pyc

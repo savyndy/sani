@@ -8,7 +8,7 @@ function writeKey(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); retur
 let db = Object.assign({
   names:{ her:'Her', his:'Him' }, since:'', secret:'forever', secretChanged:false, me:'',
   stories:[], notes:[], quiz:[], memBest:null, seeded:false, tipShown:false,
-  watchlist:[], watched:[], dates:[], best:{}
+  watchlist:[], watched:[], dates:[], best:{}, theme:'', hamilton:false
 }, readKey(K_DATA) || {});
 /* older saved data may be missing the newer lists, so make sure they all exist */
 ['stories', 'notes', 'quiz', 'watchlist', 'watched', 'dates'].forEach(k => { if (!Array.isArray(db[k])) db[k] = []; });

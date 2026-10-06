@@ -4,18 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Our Story</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23374A4F'/%3E%3Cpath d='M16 26V11' stroke='%23A98B52' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M16 15c0-4 3-7 7-7 0 4-3 7-7 7zM16 15c0-4-3-7-7-7 0 4 3 7 7 7z' fill='%237D8C6F'/%3E%3Cpath d='M16 22c0-3.2 2.4-5.6 5.6-5.6 0 3.2-2.4 5.6-5.6 5.6z' fill='%23B9697A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Manrope:wght@400..700&display=swap" rel="stylesheet">
+<script>
+/* set the saved theme before first paint so the app never flashes the wrong one */
+try {
+  var saved = JSON.parse(localStorage.getItem('twosides:data:v1') || '{}').theme;
+  if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+} catch (e) {}
+</script>
+<link rel="stylesheet" href="css/hands.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/login.css">
 <link rel="stylesheet" href="css/book.css">
 <link rel="stylesheet" href="css/games.css">
+<link rel="stylesheet" href="css/intro.css">
+<link rel="stylesheet" href="css/hamilton.css">
 </head>
 <body>
 
 <div class="aurora" aria-hidden="true"><b></b><b></b><b></b></div>
 <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+
+<!-- ============ INTRO: the pixel park ============ -->
+<!--
+  A hand-authored pixel scene: he walks into the park, she arrives with the
+  cake, and the heart they raise over it swallows the screen.
+
+  Everything is drawn into a 256x144 buffer and blown up with nearest-neighbour
+  scaling at an integer factor, so every pixel stays a hard, equal-sized square.
+  The two people are Liberated Pixel Cup artwork and the cake is from
+  OpenGameArt, both recoloured to this palette and baked into img/. The park
+  itself is generated. js/intro.js owns the scene and the timing.
+-->
+<div id="intro" aria-hidden="true">
+  <canvas id="introCanvas"></canvas>
+</div>
 
 <!-- ============ LOGIN ============ -->
 <section id="login" class="scene" aria-label="Sign in">
@@ -42,7 +68,7 @@
     <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
       <defs>
         <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ff8fb1"/><stop offset=".5" stop-color="#d2b4ff"/><stop offset="1" stop-color="#8fb4ff"/>
+          <stop offset="0" stop-color="#d4588a"/><stop offset=".5" stop-color="#c9922e"/><stop offset="1" stop-color="#a06ad8"/>
         </linearGradient>
       </defs>
       <circle class="track" cx="50" cy="50" r="48"/>
@@ -62,14 +88,16 @@
 <!-- ============ APP SHELL ============ -->
 <section id="app" class="scene off" aria-label="Our storybook">
   <header class="topbar">
-    <div class="brand"><span class="h" aria-hidden="true">&#9829;</span><span id="brandName">Our Story</span></div>
+    <div class="brand"><span class="h" aria-hidden="true">&#10086;</span><span id="brandName">Our Story</span></div>
+    <button class="pill" id="btnMenu" type="button" aria-expanded="false" aria-controls="sideMenu">Menu</button>
   </header>
 
-  <div class="side-menu">
-    <button class="pill" id="btnLogout" type="button">Log out</button>
+  <div class="side-menu" id="sideMenu">
+    <button class="pill" id="btnTheme" type="button" aria-pressed="false">Lamplight</button>
+    <button class="pill" id="btnSideGames" type="button">Games</button>
+    <button class="pill" id="btnSideMusic" type="button">Music</button>
     <button class="pill" id="btnSettings" type="button">Settings</button>
-    <button class="pill" id="btnSideGames" type="button">&#127918; Games</button>
-    <button class="pill" id="btnSideMusic" type="button">&#127925; Music</button>
+    <button class="pill quiet" id="btnLogout" type="button">Log out</button>
   </div>
 
   <main class="stage" id="stage">
@@ -130,6 +158,10 @@
 <script src="js/data.js"></script>
 <script src="js/book.js"></script>
 <script src="js/games.js"></script>
+<script src="js/intro.js"></script>
 <script src="js/app.js"></script>
+<script src="js/hamilton.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/orb.js"></script>
 </body>
 </html>

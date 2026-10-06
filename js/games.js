@@ -193,23 +193,25 @@ function rrect(c, x, y, w, h, r){
 
 /* ---- the game list: add a new game by adding one line here ---- */
 const GAMES = [
-  { id:'memory',  title:'Memory Match',     icon:'\uD83C\uDCCF', blurb:'Flip cards and find all eight pairs.',            a:'#ffd3e0', b:'#e2d6ff', pages:[pageMemory] },
-  { id:'wyr',     title:'Would You Rather', icon:'\uD83E\uDD14', blurb:'Pick in secret, then see if you matched.',        a:'#d7e3ff', b:'#e9d9ff', pages:[pageWYR] },
-  { id:'quiz',    title:'Love Quiz',        icon:'\uD83D\uDC8C', blurb:'Write questions about yourself. Your person guesses.', a:'#ffe1c9', b:'#ffd3e0', pages:[pageQuizBox, pageQuizPlay] },
-  { id:'hearts',  title:'Catch the Hearts', icon:'\uD83D\uDC97', blurb:'Catch falling hearts. Dodge the broken ones.',    a:'#ffc2d6', b:'#c9b8ff', mount:mountHearts },
-  { id:'scratch', title:'Scratch & Reveal', icon:'\uD83C\uDF9F\uFE0F', blurb:'Scratch a card to win a love coupon.',      a:'#fff0bf', b:'#ffd0e2', mount:mountScratch },
-  { id:'wheel',   title:'Spin the Wheel',   icon:'\uD83C\uDFA1', blurb:'Date ideas, truths and dares.',                   a:'#cfe0ff', b:'#ffd6e8', mount:mountWheel },
-  { id:'ttt',     title:'Hearts vs Stars',  icon:'\u2B50',       blurb:'Tic-tac-toe with a score that lasts.',            a:'#ffd3e0', b:'#cfe0ff', mount:mountTTT },
-  { id:'draw',    title:'Quick Draw',       icon:'\u26A1',       blurb:'Wait for NOW, then tap your side first.',         a:'#ffe7a8', b:'#ffbfd0', mount:mountQuickDraw },
-  { id:'aura',    title:'Ask the Aura',     icon:'\uD83D\uDD2E', blurb:'A magic orb for the big questions.',              a:'#d9c6ff', b:'#bcd3ff', mount:mountAura }
+  { id:'memory',  title:'Memory Match',     blurb:'Flip cards and find all eight pairs.',            a:'#f5bcd6', b:'#ddc4f2', pages:[pageMemory] },
+  { id:'wyr',     title:'Would You Rather', blurb:'Pick in secret, then see if you matched.',        a:'#cdb4ee', b:'#f3c8de', pages:[pageWYR] },
+  { id:'quiz',    title:'Love Quiz',        blurb:'Write questions about yourself. Your person guesses.', a:'#f6d49a', b:'#f3bed4', pages:[pageQuizBox, pageQuizPlay] },
+  { id:'hearts',  title:'Catch the Hearts', blurb:'Catch falling hearts. Dodge the broken ones.',    a:'#f6aec8', b:'#c8a6ec', mount:mountHearts },
+  { id:'scratch', title:'Scratch & Reveal', blurb:'Scratch a card to win a love coupon.',      a:'#f8e2a6', b:'#eeb6d0', mount:mountScratch },
+  { id:'wheel',   title:'Spin the Wheel',   blurb:'Date ideas, truths and dares.',                   a:'#c4aaea', b:'#f6bcd2', mount:mountWheel },
+  { id:'ttt',     title:'Hearts vs Stars',  blurb:'Tic-tac-toe with a score that lasts.',            a:'#f3bcd4', b:'#c2aae8', mount:mountTTT },
+  { id:'draw',    title:'Quick Draw',       blurb:'Wait for NOW, then tap your side first.',         a:'#f8d894', b:'#f4cce0', mount:mountQuickDraw },
+  { id:'aura',    title:'Ask the Aura',     blurb:'A magic orb for the big questions.',              a:'#d8b4f0', b:'#f2bcd8', mount:mountAura },
+  { id:'hoops',   title:'Two-Player Hoops', blurb:'Take turns shooting at a moving ring. Most points after 3 rounds wins.', a:'#f7c9a6', b:'#edb9d2', mount:mountHoops }
 ];
 
 /* ---- stage: open / close a game ---- */
 let activeGame = null;
 function buildGameGrid(){
   $('#gamesContainer').innerHTML = GAMES.map(g =>
-    '<button class="game-card" type="button" data-game="' + g.id + '" style="--art-a:' + g.a + ';--art-b:' + g.b + '">' +
-    '<span class="game-art" aria-hidden="true"><span>' + g.icon + '</span></span>' +
+    '<button class="game-card" type="button" data-game="' + g.id + '"' +
+    ' style="--art-a:' + g.a + ';--art-b:' + g.b + ';--icon:url(img/icons/' + g.id + '.svg)">' +
+    '<span class="game-art" aria-hidden="true"><i></i></span>' +
     '<span class="game-blurb">' + esc(g.blurb) + '</span><span class="game-title">' + esc(g.title) + '</span></button>').join('');
 }
 function renderGame(){
@@ -283,8 +285,8 @@ function mountHearts(body){
         const it = items[i]; it.y += it.v * dt; it.r += it.rv * dt;
         if (it.y > H - 70 && it.y < H - 26 && Math.abs(it.x - px) < 54){
           items.splice(i, 1);
-          if (it.k.bad){ lives--; shake = .35; burst(it.x, it.y, '#9aa0b5'); }
-          else { score += it.k.pts; burst(it.x, it.y, it.k.pts > 1 ? '#ffd86b' : '#ff8fb1'); }
+          if (it.k.bad){ lives--; shake = .35; burst(it.x, it.y, '#8d8f85'); }
+          else { score += it.k.pts; burst(it.x, it.y, it.k.pts > 1 ? '#f0cc5e' : '#f08ab4'); }
           hud(); if (lives <= 0){ end(); break; }
         } else if (it.y > H + 30) items.splice(i, 1);
       }
@@ -293,18 +295,18 @@ function mountHearts(body){
 
     ctx.save();
     if (shake > 0){ shake -= dt; ctx.translate((Math.random() - .5) * 9, (Math.random() - .5) * 9); }
-    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2b1242'); g.addColorStop(1, '#14224f');
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2a0f3a'); g.addColorStop(1, '#1a0d38');
     ctx.fillStyle = g; ctx.fillRect(-12, -12, W + 24, H + 24);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#f4e8f6';
     stars.forEach(s => { ctx.globalAlpha = .25 + .6 * Math.abs(Math.sin(t / 900 + s.p)); ctx.fillRect(s.x, s.y, s.r, s.r); });
     ctx.globalAlpha = 1; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '34px serif';
     items.forEach(it => { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(Math.sin(it.r) * .35); ctx.fillText(it.k.e, 0, 0); ctx.restore(); });
     parts.forEach(p => { ctx.globalAlpha = Math.max(0, p.life / .65); ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 6.283); ctx.fill(); });
     ctx.globalAlpha = 1;
-    ctx.shadowColor = '#ff8fb1'; ctx.shadowBlur = 18;
-    const bg = ctx.createLinearGradient(px - 48, 0, px + 48, 0); bg.addColorStop(0, '#e8718c'); bg.addColorStop(1, '#5b8af0');
-    ctx.fillStyle = bg; rrect(ctx, px - 48, H - 58, 96, 30, 15); ctx.fill();
-    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = '16px serif'; ctx.fillText('\u2665', px, H - 43);
+    ctx.shadowColor = '#f0cc5e'; ctx.shadowBlur = 18;
+    const bg = ctx.createLinearGradient(px - 48, 0, px + 48, 0); bg.addColorStop(0, '#d4588a'); bg.addColorStop(1, '#8a5fc8');
+    ctx.fillStyle = bg; rrect(ctx, px - 48, H - 58, 96, 30, 6); ctx.fill();
+    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,250,253,.92)'; ctx.font = '16px serif'; ctx.fillText('\u2665', px, H - 43);
     ctx.restore();
   }
   const setX = e => { const r = cv.getBoundingClientRect(); tx = clamp((e.clientX - r.left) * W / r.width, 40, W - 40); };
@@ -335,11 +337,12 @@ function mountScratch(body){
     w = wrapEl.clientWidth; h = wrapEl.clientHeight; ctx = fitCanvas(cv, w, h);
     ctx.globalCompositeOperation = 'source-over';
     const g = ctx.createLinearGradient(0, 0, w, h);
-    g.addColorStop(0, '#c9b8ff'); g.addColorStop(.35, '#ffd0e2'); g.addColorStop(.7, '#bcd8ff'); g.addColorStop(1, '#e6c8ff');
+    /* brushed brass rather than a pastel rainbow, so the reveal feels like foil */
+    g.addColorStop(0, '#c9a44e'); g.addColorStop(.35, '#f2dca8'); g.addColorStop(.7, '#bb98dc'); g.addColorStop(1, '#e8b6ce');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.fillStyle = 'rgba(255,250,253,.38)';
     for (let i = 0; i < 46; i++){ ctx.beginPath(); ctx.arc(Math.random() * w, Math.random() * h, 1 + Math.random() * 2.5, 0, 6.283); ctx.fill(); }
-    ctx.fillStyle = 'rgba(70,30,100,.75)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(52,30,58,.78)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.font = 'italic 600 ' + Math.round(w * .075) + 'px Fraunces, Georgia, serif'; ctx.fillText('Scratch here', w / 2, h / 2 - 8);
     ctx.font = Math.round(w * .06) + 'px serif'; ctx.fillText('\u2665', w / 2, h / 2 + w * .075);
   }
@@ -398,7 +401,7 @@ const WHEELS = {
     ['Impression', 'Do your best impression of me.'], ['Forehead kiss', 'Kiss me on the forehead and tell me why.'] ] }
 };
 function mountWheel(body){
-  const SIZE = 340, COLORS = ['#ffb3c7', '#d9c6ff', '#bcd3ff', '#ffd9b8'];
+  const SIZE = 340, COLORS = ['#f0a8c6', '#cbaaec', '#f6c6dc', '#f0d183'];
   body.innerHTML =
     '<div class="g-seg" id="wtabs"></div>' +
     '<div class="wheel-wrap"><div class="wheel-ptr"></div><canvas id="wcv" aria-label="Wheel"></canvas></div>' +
@@ -412,13 +415,13 @@ function mountWheel(body){
     ctx.clearRect(0, 0, SIZE, SIZE); ctx.save(); ctx.translate(c, c); ctx.rotate(rot);
     for (let i = 0; i < n; i++){
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * a, (i + 1) * a); ctx.closePath();
-      ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.save(); ctx.rotate((i + .5) * a); ctx.fillStyle = '#3c2842'; ctx.font = '700 14px Nunito, system-ui, sans-serif';
+      ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill(); ctx.strokeStyle = 'rgba(255,250,253,.9)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.save(); ctx.rotate((i + .5) * a); ctx.fillStyle = '#3a2340'; ctx.font = '700 15px Manrope, system-ui, sans-serif';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(items[i][0], R - 16, 0); ctx.restore();
     }
     ctx.restore();
-    ctx.beginPath(); ctx.arc(c, c, 26, 0, 6.283); ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 8; ctx.fill(); ctx.shadowBlur = 0;
-    ctx.fillStyle = '#e8718c'; ctx.font = '24px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('\u2665', c, c + 1);
+    ctx.beginPath(); ctx.arc(c, c, 26, 0, 6.283); ctx.fillStyle = '#fffafd'; ctx.shadowColor = 'rgba(44,24,50,.26)'; ctx.shadowBlur = 8; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#a32a5e'; ctx.font = '24px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('\u2665', c, c + 1);
   }
   function finish(){
     spinning = false; $('#wspin', body).disabled = false;
@@ -550,3 +553,263 @@ function mountAura(body){
   return () => clearTimeout(tm);
 }
 
+/*
+  Turn-based basketball. Player 1 (her) and Player 2 (his) alternate,
+  each getting a 30-second clock, for 3 rounds (6 turns total). The
+  ring drifts side to side; the ball rests at bottom-center between
+  shots. Aim + power with the arrow keys and Space, or drag the ball
+  like a slingshot on touch/mouse. Highest combined score after the
+  last turn wins.
+*/
+function mountHoops(body){
+  const W = 400, H = 500;
+  const ROUNDS = 3;
+  const TURN_SECONDS = 30;
+  const GRAVITY = 980;               // px/s^2
+  const MAX_SPEED = 640;             // launch speed at 100% power
+  const MIN_ANGLE = 24, MAX_ANGLE = 82; // degrees above horizontal
+  const MIN_POWER = 15, MAX_POWER = 100;
+  const REST_X = W / 2, REST_Y = H - 56, BALL_R = 13;
+  const RIM_Y = 108, RIM_HALF = 34, RIM_THICK = 5, NET_H = 34;
+  const ORDER = ['her', 'his'];
+
+  body.innerHTML =
+    '<div class="hud">' +
+      '<span class="c-her">' + esc(N('her')) + '<b id="bb-her">0</b></span>' +
+      '<span>Round <b id="bb-round" style="color:var(--ink)">1</b> / ' + ROUNDS + '</span>' +
+      '<span class="c-his">' + esc(N('his')) + '<b id="bb-his">0</b></span>' +
+    '</div>' +
+    '<p class="bb-turn" id="bbTurn"></p>' +
+    '<canvas class="g-canvas" id="bbcv" aria-label="Two-Player Hoops game"></canvas>' +
+    '<div class="bb-meters">' +
+      '<span>Angle<div class="bb-bar"><i id="bbAngleFill"></i></div></span>' +
+      '<span>Power<div class="bb-bar"><i id="bbPowerFill"></i></div></span>' +
+    '</div>' +
+    '<p class="g-msg" id="bbmsg">Arrows to aim, Space to shoot &mdash; or drag the ball and let go.</p>' +
+    '<button class="g-btn" id="bbgo" type="button">Start game</button>';
+
+  const cv = $('#bbcv', body), ctx = fitCanvas(cv, W, H);
+  const turnEl = $('#bbTurn', body), msgEl = $('#bbmsg', body), goBtn = $('#bbgo', body);
+  const herScoreEl = $('#bb-her', body), hisScoreEl = $('#bb-his', body), roundEl = $('#bb-round', body);
+  const angleFill = $('#bbAngleFill', body), powerFill = $('#bbPowerFill', body);
+
+  const S = {
+    phase:'idle',           // idle | playing | between | done
+    turnIdx:0,               // 0..(ROUNDS*2 - 1)
+    player:'her',
+    scores:{ her:0, his:0 },
+    timeLeft:TURN_SECONDS,
+    tick:0,
+    angle:55, power:65,
+    keys:{ l:false, r:false, u:false, d:false },
+    ball:{ x:REST_X, y:REST_Y, vx:0, vy:0, flying:false },
+    trail:[],
+    hoop:{ x:W / 2, t:0, speed:.5, dir:1, range:W * .3 },
+    particles:[], flash:0,
+    dragging:false, dragFrom:null, dragNow:null
+  };
+
+  function round(){ return Math.floor(S.turnIdx / 2) + 1; }
+  function other(p){ return p === 'her' ? 'his' : 'her'; }
+  function fmtTime(s){ return s + 's'; }
+
+  function paintMeters(){
+    angleFill.style.width = Math.round((S.angle - MIN_ANGLE) / (MAX_ANGLE - MIN_ANGLE) * 100) + '%';
+    powerFill.style.width = Math.round((S.power - MIN_POWER) / (MAX_POWER - MIN_POWER) * 100) + '%';
+  }
+  function paintScores(){
+    herScoreEl.textContent = S.scores.her; hisScoreEl.textContent = S.scores.his; roundEl.textContent = Math.min(round(), ROUNDS);
+  }
+  function paintTurn(){
+    if (S.phase === 'playing') turnEl.textContent = esc(N(S.player)) + "'s shot \u2014 " + fmtTime(S.timeLeft);
+    else if (S.phase === 'between') turnEl.textContent = 'Switching players\u2026';
+    else if (S.phase === 'done') turnEl.textContent = 'Game over';
+    else turnEl.textContent = 'Player 1, ' + esc(N('her')) + ', shoots first.';
+  }
+
+  function resetBall(){ S.ball.x = REST_X; S.ball.y = REST_Y; S.ball.vx = 0; S.ball.vy = 0; S.ball.flying = false; S.trail.length = 0; }
+
+  function startGame(){
+    S.turnIdx = 0; S.player = ORDER[0]; S.scores = { her:0, his:0 }; S.phase = 'playing'; S.timeLeft = TURN_SECONDS;
+    S.angle = 55; S.power = 65; resetBall(); S.hoop.x = W / 2; S.hoop.t = 0;
+    goBtn.hidden = true; msgEl.textContent = 'Arrows to aim, Space to shoot \u2014 or drag the ball and let go.';
+    paintScores(); paintTurn(); paintMeters();
+    clearInterval(S.clock);
+    S.clock = setInterval(tickClock, 1000);
+  }
+  function tickClock(){
+    if (S.phase !== 'playing') return;
+    S.timeLeft--;
+    if (S.timeLeft <= 0) endTurn(); else paintTurn();
+  }
+  function endTurn(){
+    clearInterval(S.clock);
+    S.turnIdx++;
+    if (S.turnIdx >= ROUNDS * 2){ finishGame(); return; }
+    S.phase = 'between'; paintTurn();
+    S.player = ORDER[S.turnIdx % 2];
+    resetBall();
+    setTimeout(() => {
+      if (S.phase !== 'between') return;
+      S.phase = 'playing'; S.timeLeft = TURN_SECONDS; paintScores(); paintTurn();
+      S.clock = setInterval(tickClock, 1000);
+    }, 1100);
+  }
+  function finishGame(){
+    S.phase = 'done'; paintTurn();
+    const h = S.scores.her, j = S.scores.his;
+    const line = h === j ? "It's a tie! " + h + ' each.' : (h > j ? esc(N('her')) : esc(N('his'))) + ' wins, ' + Math.max(h, j) + ' to ' + Math.min(h, j) + '.';
+    msgEl.textContent = line; goBtn.hidden = false; goBtn.textContent = 'Play again';
+  }
+
+  function shoot(angleDeg, powerPct){
+    if (S.ball.flying || S.phase !== 'playing') return;
+    const rad = angleDeg * Math.PI / 180, speed = MAX_SPEED * (powerPct / 100);
+    S.ball.vx = Math.cos(rad) * speed; S.ball.vy = -Math.sin(rad) * speed; S.ball.flying = true; S.trail.length = 0;
+  }
+
+  function scoreShot(swish){
+    const pts = swish ? 3 : 2;
+    S.scores[S.player] += pts; paintScores();
+    msgEl.textContent = (swish ? 'Swish! ' : 'Nothing but net-ish! ') + '+' + pts + ' for ' + esc(N(S.player)) + '.';
+    S.flash = .35;
+    for (let i = 0; i < 18; i++){ const a = Math.random() * 6.283, s = 60 + Math.random() * 160; S.particles.push({ x:S.hoop.x, y:RIM_Y, vx:Math.cos(a) * s, vy:Math.sin(a) * s - 40, life:.7 }); }
+  }
+
+  let raf = 0, last = 0;
+  function frame(t){
+    raf = requestAnimationFrame(frame);
+    const dt = Math.min(.033, (t - last) / 1000 || 0); last = t;
+
+    S.hoop.t += dt * S.hoop.speed;
+    S.hoop.x = W / 2 + Math.sin(S.hoop.t) * S.hoop.range;
+
+    if (S.phase === 'playing' && !S.dragging){
+      if (S.keys.l) S.angle = clamp(S.angle + 55 * dt, MIN_ANGLE, MAX_ANGLE);
+      if (S.keys.r) S.angle = clamp(S.angle - 55 * dt, MIN_ANGLE, MAX_ANGLE);
+      if (S.keys.u) S.power = clamp(S.power + 70 * dt, MIN_POWER, MAX_POWER);
+      if (S.keys.d) S.power = clamp(S.power - 70 * dt, MIN_POWER, MAX_POWER);
+      paintMeters();
+    }
+
+    const b = S.ball;
+    if (b.flying){
+      const prevY = b.y;
+      b.vy += GRAVITY * dt; b.x += b.vx * dt; b.y += b.vy * dt;
+      S.trail.push({ x:b.x, y:b.y }); if (S.trail.length > 16) S.trail.shift();
+      const crossedDown = prevY < RIM_Y && b.y >= RIM_Y && b.vy > 0;
+      if (crossedDown && Math.abs(b.x - S.hoop.x) < RIM_HALF - BALL_R * .4){
+        const swish = Math.abs(b.x - S.hoop.x) < RIM_HALF * .35;
+        scoreShot(swish); resetBall();
+      } else if (b.y - BALL_R > H || b.x < -40 || b.x > W + 40){
+        resetBall();
+      }
+    }
+    for (let i = S.particles.length - 1; i >= 0; i--){ const p = S.particles[i]; p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 240 * dt; if (p.life <= 0) S.particles.splice(i, 1); }
+    if (S.flash > 0) S.flash -= dt;
+
+    draw();
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#ffe3b0'); g.addColorStop(1, '#ffb15e');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // backboard
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.fillRect(S.hoop.x - 46, RIM_Y - 46, 92, 40);
+    ctx.strokeStyle = 'rgba(120,70,30,.55)'; ctx.lineWidth = 3; ctx.strokeRect(S.hoop.x - 46, RIM_Y - 46, 92, 40);
+    ctx.strokeRect(S.hoop.x - 16, RIM_Y - 36, 32, 20);
+
+    // net
+    ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 1.5;
+    for (let i = -3; i <= 3; i++){
+      ctx.beginPath(); ctx.moveTo(S.hoop.x + i * (RIM_HALF / 3.2), RIM_Y + RIM_THICK);
+      ctx.lineTo(S.hoop.x + i * (RIM_HALF / 3.2) * .35, RIM_Y + NET_H); ctx.stroke();
+    }
+    // rim
+    ctx.strokeStyle = '#d7472b'; ctx.lineWidth = RIM_THICK;
+    ctx.beginPath(); ctx.moveTo(S.hoop.x - RIM_HALF, RIM_Y); ctx.lineTo(S.hoop.x + RIM_HALF, RIM_Y); ctx.stroke();
+    if (S.flash > 0){ ctx.globalAlpha = Math.min(.5, S.flash); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(S.hoop.x, RIM_Y, RIM_HALF + 14, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1; }
+
+    // trail
+    S.trail.forEach((p, i) => { ctx.globalAlpha = i / S.trail.length * .5; ctx.fillStyle = '#c75b1a'; ctx.beginPath(); ctx.arc(p.x, p.y, BALL_R * .55, 0, 6.283); ctx.fill(); });
+    ctx.globalAlpha = 1;
+
+    // particles
+    S.particles.forEach(p => { ctx.globalAlpha = Math.max(0, p.life / .7); ctx.fillStyle = '#ffd86b'; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 6.283); ctx.fill(); });
+    ctx.globalAlpha = 1;
+
+    // ball
+    const bx = S.dragging ? S.dragNow.x : S.ball.x, by = S.dragging ? S.dragNow.y : S.ball.y;
+    ctx.fillStyle = '#c75b1a'; ctx.beginPath(); ctx.arc(bx, by, BALL_R, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = '#3c2210'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(bx - BALL_R, by); ctx.lineTo(bx + BALL_R, by); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx, by - BALL_R); ctx.lineTo(bx, by + BALL_R); ctx.stroke();
+
+    // aim line (only while idle at rest and not flying)
+    if (!S.ball.flying && S.phase === 'playing' && !S.dragging){
+      const rad = S.angle * Math.PI / 180, len = 30 + S.power * .5;
+      ctx.strokeStyle = 'rgba(60,30,10,.55)'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(S.ball.x, S.ball.y);
+      ctx.lineTo(S.ball.x + Math.cos(rad) * len, S.ball.y - Math.sin(rad) * len); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if (S.dragging){
+      ctx.strokeStyle = 'rgba(60,30,10,.55)'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(S.dragFrom.x, S.dragFrom.y); ctx.lineTo(S.dragNow.x, S.dragNow.y); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  /* ---- keyboard ---- */
+  const kd = e => {
+    if (S.phase === 'idle' || S.phase === 'done'){ if (e.code === 'Space'){ e.preventDefault(); startGame(); } return; }
+    const k = e.key;
+    if (k === 'ArrowLeft'){ S.keys.l = true; e.preventDefault(); }
+    else if (k === 'ArrowRight'){ S.keys.r = true; e.preventDefault(); }
+    else if (k === 'ArrowUp'){ S.keys.u = true; e.preventDefault(); }
+    else if (k === 'ArrowDown'){ S.keys.d = true; e.preventDefault(); }
+    else if (e.code === 'Space'){ e.preventDefault(); shoot(S.angle, S.power); }
+  };
+  const ku = e => {
+    const k = e.key;
+    if (k === 'ArrowLeft') S.keys.l = false;
+    else if (k === 'ArrowRight') S.keys.r = false;
+    else if (k === 'ArrowUp') S.keys.u = false;
+    else if (k === 'ArrowDown') S.keys.d = false;
+  };
+  document.addEventListener('keydown', kd); document.addEventListener('keyup', ku);
+
+  /* ---- touch / mouse slingshot ---- */
+  const toLocal = e => { const r = cv.getBoundingClientRect(); return { x:(e.clientX - r.left) * W / r.width, y:(e.clientY - r.top) * H / r.height }; };
+  cv.addEventListener('pointerdown', e => {
+    if (S.phase !== 'playing' || S.ball.flying) return;
+    const p = toLocal(e); S.dragging = true; S.dragFrom = { x:REST_X, y:REST_Y }; S.dragNow = p;
+    try { cv.setPointerCapture(e.pointerId); } catch(x){}
+  });
+  cv.addEventListener('pointermove', e => { if (S.dragging) S.dragNow = toLocal(e); });
+  function releaseDrag(){
+    if (!S.dragging) return;
+    const dx = S.dragFrom.x - S.dragNow.x, dy = S.dragFrom.y - S.dragNow.y;
+    const dist = Math.min(110, Math.hypot(dx, dy));
+    S.dragging = false;
+    if (dist < 14) return; // too small, treat as a tap, no shot
+    let angleDeg = Math.atan2(dy, dx) * 180 / Math.PI; angleDeg = clamp(angleDeg, MIN_ANGLE, MAX_ANGLE);
+    const powerPct = clamp(MIN_POWER + (dist / 110) * (MAX_POWER - MIN_POWER), MIN_POWER, MAX_POWER);
+    S.angle = angleDeg; S.power = powerPct; paintMeters();
+    shoot(angleDeg, powerPct);
+  }
+  cv.addEventListener('pointerup', releaseDrag);
+  cv.addEventListener('pointercancel', () => { S.dragging = false; });
+
+  goBtn.addEventListener('click', startGame);
+  paintTurn(); paintMeters(); draw();
+  raf = requestAnimationFrame(frame);
+
+  return () => {
+    cancelAnimationFrame(raf); clearInterval(S.clock);
+    document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku);
+  };
+}

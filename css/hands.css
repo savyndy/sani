@@ -1,0 +1,31 @@
+/* The two handwriting fonts, drawn from the note.
+   Tharu Hand is his: looser, forward-leaning, looped l.
+   Sani Hand is hers: rounder, near-upright, barred capital I. */
+
+@font-face{
+  font-family:"Tharu Hand";
+  src:url("../fonts/TharuHand.woff2") format("woff2"),
+      url("../fonts/TharuHand.ttf") format("truetype");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:"Sani Hand";
+  src:url("../fonts/SaniHand.woff2") format("woff2"),
+      url("../fonts/SaniHand.ttf") format("truetype");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root{
+  --hand-boy:"Tharu Hand","Bradley Hand",cursive;
+  --hand-girl:"Sani Hand","Bradley Hand",cursive;
+}
+
+/* Both hands are written at a large x-height, so they sit happily a
+   touch bigger than the body face beside them. */
+.hand-boy{ font-family:var(--hand-boy); font-size:1.18em; line-height:1.45; }
+.hand-girl{ font-family:var(--hand-girl); font-size:1.14em; line-height:1.45; }

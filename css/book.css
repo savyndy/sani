@@ -1,40 +1,128 @@
 /* ---------- App shell ---------- */
 #app{display:flex;flex-direction:column}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;gap:12px}
-.brand{font:italic 600 24px/1 var(--serif);display:flex;align-items:center;gap:10px}
-.brand span.h{color:var(--rose);font-size:20px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;gap:12px}
+.brand{font:italic 600 27px/1 var(--serif);font-variation-settings:var(--fvs-title);display:flex;align-items:center;gap:11px;letter-spacing:-.01em}
+.brand span.h{color:var(--brass);font-size:19px;font-style:normal}
 .top-actions{display:flex;gap:8px}
 .stage{flex:1;min-height:0;display:grid;place-items:center;overflow:auto;padding:46px 0 10px;position:relative;touch-action:pan-y}
-.navbar{display:flex;justify-content:center;align-items:center;gap:16px;padding:8px 16px 16px}
-.nav-label{min-width:130px;text-align:center;font:italic 400 19px var(--serif);color:var(--ink)}
+.navbar{display:flex;justify-content:center;align-items:center;gap:18px;padding:8px 16px 16px}
+.nav-label{min-width:140px;text-align:center;font:italic 400 21px var(--serif);font-variation-settings:var(--fvs-lede);color:var(--ink)}
 
-.side-menu {
-  position: absolute;
-  right: 20px;
-  top: 22%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-  z-index: 10;
+#btnMenu{display:none}
+
+/*
+  The side controls are one designed object rather than five loose buttons: a
+  small plaque made of the book's own materials. A plum binding strip across
+  the top with a brass hairline under it, paper below, and the controls as
+  letterpress rows divided by hairlines.
+
+  Hovering lights a brass marker on the left edge and walks the label in,
+  which is the same gesture the bookmarks along the book use. It reads as part
+  of the room the book sits in, rather than as browser furniture.
+*/
+.side-menu{
+  position:absolute;
+  right:26px; top:50%;
+  translate:0 -50%;
+  display:flex; flex-direction:column; align-items:stretch;
+  gap:0; width:170px; z-index:10;
+  border-radius:11px; overflow:hidden;
+  background:var(--card-solid);
+  border:1px solid var(--line);
+  box-shadow:0 20px 46px rgba(48,28,54,.22);
+}
+/* the binding strip, echoing the book's spine */
+.side-menu::before{
+  content:""; flex:none; height:7px;
+  background:linear-gradient(90deg,var(--bind-1),var(--bind-2));
+  box-shadow:0 1px 0 var(--brass);
+}
+.side-menu .pill{
+  position:relative; justify-content:flex-start;
+  border:0; border-radius:0; background:transparent;
+  padding:.95em 1em .95em 1.2em;
+  font:700 12px var(--sans); letter-spacing:.095em; text-transform:uppercase;
+  color:var(--ink);
+  transition:background .2s ease,color .2s ease,padding-left .2s ease;
+}
+.side-menu .pill + .pill{border-top:1px solid var(--line)}
+/* the brass marker: lit on hover, and left lit while the lamplight is on */
+.side-menu .pill::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--brass); opacity:0; transition:opacity .2s ease;
+}
+.side-menu .pill:hover:not(:disabled){
+  transform:none; background:var(--iris-soft); color:var(--ink);
+  padding-left:1.5em; border-color:transparent;
+}
+.side-menu .pill:hover:not(:disabled)::before{opacity:1}
+.side-menu .pill[aria-pressed="true"]{background:transparent;color:var(--rail-on)}
+.side-menu .pill[aria-pressed="true"]::before{opacity:1}
+/* log out sits quieter, at the foot of the plaque */
+.side-menu .pill.quiet{
+  text-decoration:none; color:var(--ink-soft);
+  font-size:11px; letter-spacing:.11em;
+}
+.side-menu .pill.quiet:hover:not(:disabled){color:var(--ink);background:var(--iris-soft)}
+
+/*
+  Below 900px the book switches to a single centred page that very nearly fills
+  the width, so an absolutely positioned rail on the right edge sat ON TOP of
+  the page. Under that width the rail collapses into a Menu disclosure in the
+  topbar and opens as a panel, which never overlaps the paper.
+*/
+@media (max-width:900px){
+  #btnMenu{display:inline-flex}
+  /* the same plaque, just hung from the topbar as a disclosure */
+  .side-menu{
+    right:16px;top:auto;left:auto;translate:0;
+    width:184px;z-index:40;
+    opacity:0;visibility:hidden;transform:translateY(-8px) scale(.97);transform-origin:top right;
+    transition:opacity .22s ease,transform .22s ease,visibility 0s .22s;
+  }
+  #app.menu-open .side-menu{
+    opacity:1;visibility:visible;transform:translateY(0) scale(1);
+    transition:opacity .22s ease,transform .22s ease,visibility 0s;
+  }
 }
 
 /* ---------- Book ---------- */
+/*
+  The book is presented as an object floating in space rather than a flat panel:
+  a scene perspective tilts it back, with a soft contact shadow underneath.
+
+  The tilt uses the individual `rotate` property on purpose. book.js writes
+  `shell.style.transform` directly to centre the spread, so anything that needed
+  `transform` here would fight it.
+
+  No idle bob animation here. A drifting shell is the obvious way to say
+  "hovering", but this element is also the one book.js writes transform on for
+  every page turn, and anything moving it continuously makes each flip look like
+  it settles with a shudder. The float is sold by the tilt plus a deep, offset
+  contact shadow instead, both of which are static.
+
+  scrollbar-gutter keeps .stage from gaining and losing a scrollbar as the book
+  is re-measured, which is its own source of one-pixel jitter.
+*/
+.stage{perspective:2000px;perspective-origin:50% 44%}
 .book-shell{
   position:relative;width:var(--bw);height:var(--ph);flex:none;
-  transition:transform .95s cubic-bezier(.5,.05,.25,1);
+  transition:transform 1.25s cubic-bezier(.5,.05,.25,1);
+  rotate:x 6deg;
 }
 .book-shell::after{
-  content:"";position:absolute;left:4%;right:4%;bottom:-26px;height:34px;z-index:-1;
-  background:radial-gradient(ellipse at center,rgba(30,5,50,.42),transparent 70%);filter:blur(9px);
+  content:"";position:absolute;left:3%;right:3%;bottom:-34px;height:46px;z-index:-1;
+  background:radial-gradient(ellipse at center,rgba(40,8,36,.55),rgba(40,8,36,.2) 44%,transparent 72%);
+  filter:blur(14px);
 }
 .book{position:relative;z-index:1;width:100%;height:100%;perspective:2800px}
 .board{
-  position:absolute;top:-10px;bottom:-10px;transition:opacity .6s;box-shadow:0 18px 40px rgba(20,5,40,.35);
+  position:absolute;top:-10px;bottom:-10px;transition:opacity .6s;box-shadow:0 18px 40px rgba(44,24,50,.34);
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),linear-gradient(135deg,var(--b1),var(--b2));
 }
-.board-l{--b1:#7d2749;--b2:#45215c;left:-10px;width:calc(50% + 10px);border-radius:14px 3px 3px 14px}
-.board-r{--b1:#2b3f88;--b2:#1b2a63;right:-10px;width:calc(50% + 10px);border-radius:3px 14px 14px 3px}
+/* dyed bookcloth: mulberry on her side, deep violet on his */
+.board-l{--b1:#5a1f4c;--b2:#3c1234;left:-10px;width:calc(50% + 10px);border-radius:12px 3px 3px 12px}
+.board-r{--b1:#3d1f6b;--b2:#271049;right:-10px;width:calc(50% + 10px);border-radius:3px 12px 12px 3px}
 .book:not(.single).closed .board{opacity:0}
 .book:not(.single).end .board-r{opacity:0}
 .book:not(.single).closed .board-l{opacity:0}
@@ -45,12 +133,12 @@
 
 .leaf{
   position:absolute;top:0;left:50%;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;
-  transition:transform .95s cubic-bezier(.55,.05,.3,1);will-change:transform;
+  transition:transform 1.25s cubic-bezier(.55,.05,.3,1);will-change:transform;
 }
-.book.single .leaf{left:0;width:100%;transition:transform .95s cubic-bezier(.55,.05,.3,1),opacity .3s .65s}
+.book.single .leaf{left:0;width:100%;transition:transform 1.25s cubic-bezier(.55,.05,.3,1),opacity .3s .95s}
 .leaf.flipped{transform:rotateY(-180deg)}
 .book.single .leaf.flipped{opacity:0;pointer-events:none}
-.book.single .leaf:not(.flipped){transition:transform .95s cubic-bezier(.55,.05,.3,1),opacity .15s 0s}
+.book.single .leaf:not(.flipped){transition:transform 1.25s cubic-bezier(.55,.05,.3,1),opacity .15s 0s}
 .book.noanim .leaf,.book.noanim .board{transition:none!important}
 .face{
   position:absolute;inset:0;overflow:hidden;background-color:var(--paper);
@@ -58,38 +146,153 @@
   -webkit-backface-visibility:hidden;backface-visibility:hidden;
 }
 .face.back{transform:rotateY(180deg)}
-.face.front{border-radius:2px 8px 8px 2px;box-shadow:3px 0 0 -1px #efe2e6,6px 0 0 -2px #d8c9cf}
+.face.front{border-radius:2px 8px 8px 2px;box-shadow:3px 0 0 -1px #f7eaf0,6px 0 0 -2px #e4d4de}
 .face.back{border-radius:8px 2px 2px 8px}
 .leaf.flipped .face.front,.leaf:not(.flipped) .face.back{pointer-events:none}
-.face.blank{--paper:#f5ebee}
-.tone-her{--paper:var(--rose-paper);--ac:var(--rose);--ac-deep:var(--rose-deep);--ac-soft:var(--rose-soft)}
-.tone-his{--paper:var(--blue-paper);--ac:var(--blue);--ac-deep:var(--blue-deep);--ac-soft:var(--blue-soft)}
-.tone-her::after,.tone-his::after{content:"";position:absolute;inset:12px;pointer-events:none;z-index:0}
-.tone-her::after{border:1.5px dotted rgba(178,58,94,.32);border-radius:16px}
-.tone-his::after{border:1.5px solid rgba(43,79,176,.26);border-radius:3px;outline:1px solid rgba(43,79,176,.16);outline-offset:-17px}
+.face.blank{--paper:#f9f0f5}
+/*
+  Each side also carries its own handwriting. --hand is the writer's real
+  hand, traced from the note: Sani's on her pages, Tharu's on his. It is
+  spent only on what a person actually wrote (stories, love notes, the two
+  names), never on chrome, so the book still has a typographic spine.
+*/
+.tone-her{--paper:var(--rose-paper);--ac:var(--rose);--ac-deep:var(--rose-deep);--ac-soft:var(--rose-soft);--hand:var(--hand-girl)}
+.tone-his{--paper:var(--blue-paper);--ac:var(--blue);--ac-deep:var(--blue-deep);--ac-soft:var(--blue-soft);--hand:var(--hand-boy)}
+/* her margin is drawn by hand, his is ruled. Same idea, kept, retinted. */
+.tone-her::after,.tone-his::after{content:"";position:absolute;inset:13px;pointer-events:none;z-index:0}
+.tone-her::after{border:1.5px dotted rgba(163,42,94,.3);border-radius:14px}
+.tone-his::after{border:1px solid rgba(91,52,150,.24);border-radius:2px;outline:1px solid rgba(91,52,150,.14);outline-offset:-17px}
 .shade{position:absolute;inset:0;pointer-events:none;z-index:3}
-.face.front .shade{background:linear-gradient(90deg,rgba(50,20,60,.26),transparent 12%)}
-.face.back .shade{background:linear-gradient(270deg,rgba(50,20,60,.26),transparent 12%)}
-.shade::after{content:"";position:absolute;inset:0;background:rgba(30,0,40,.22);opacity:0}
-.leaf.turning .shade::after{animation:curl .95s ease-in-out}
+.face.front .shade{background:linear-gradient(90deg,rgba(48,28,54,.26),transparent 12%)}
+.face.back .shade{background:linear-gradient(270deg,rgba(48,28,54,.26),transparent 12%)}
+.shade::after{content:"";position:absolute;inset:0;background:rgba(44,24,50,.22);opacity:0}
+.leaf.turning .shade::after{animation:curl 1.25s ease-in-out}
 @keyframes curl{0%,100%{opacity:0}45%{opacity:1}}
-.edge{position:absolute;top:0;bottom:0;width:calc(26px*var(--s));border:0;padding:0;background:transparent;z-index:4;cursor:pointer}
+
+/*
+  Paper that bends, without bending the paper.
+
+  A real curl needs the page as a deformable surface, which for live text means
+  rasterising it, which costs crisp type and selectable content. What actually
+  signals "this sheet is bowing" to the eye is not the silhouette but the
+  SPECULAR HIGHLIGHT: on a flat plate the sheen sits still, on a curved one it
+  travels across the surface as the angle changes. So the geometry stays a plane
+  and a highlight band sweeps across it instead, paired with a hair of vertical
+  stretch so the sheet reads as compressing along its width mid-turn.
+*/
+.shade::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:linear-gradient(100deg,
+    transparent 16%,
+    rgba(255,255,255,.1) 34%,
+    rgba(255,255,255,.52) 46%,
+    rgba(255,255,255,.14) 55%,
+    rgba(40,14,40,.16) 66%,
+    transparent 84%);
+  background-size:300% 100%;
+}
+.leaf.turning .face.front .shade::before{animation:sheenFwd 1.25s ease-in-out}
+.leaf.turning .face.back .shade::before{animation:sheenBack 1.25s ease-in-out}
+@keyframes sheenFwd{
+  0%{opacity:0;background-position:140% 0}
+  22%{opacity:1}
+  78%{opacity:.9}
+  100%{opacity:0;background-position:-45% 0}
+}
+@keyframes sheenBack{
+  0%{opacity:0;background-position:-45% 0}
+  22%{opacity:1}
+  78%{opacity:.9}
+  100%{opacity:0;background-position:140% 0}
+}
+/*
+  There is deliberately no scale on .leaf. A previous version bowed the sheet
+  with the individual `scale` property, which composes fine on a 2D element but
+  here lands on a `preserve-3d` element in the middle of a rotateY: engines
+  flatten the 3D context when an extra scale is introduced, and the leaf renders
+  with visible seams and popping. Width compression is not worth that.
+*/
+
+/* ---------- Dust dissolve ---------- */
+/*
+  Page content assembles left to right out of dust once a turn lands.
+
+  --grain is the alpha of the fine stripes in the top mask layer: near zero it
+  shreds the text into specks, at 1 the layer is uniformly opaque and stops
+  mattering at all, which is what lets the mask finish invisible and avoids a
+  pop when the class comes off. --dust is the wipe position. Both are registered
+  below so they can actually be interpolated.
+*/
+@property --dust{syntax:'<percentage>';inherits:false;initial-value:130%}
+@property --grain{syntax:'<number>';inherits:false;initial-value:1}
+
+/*
+  Holds the arriving page empty for the whole turn. Without it the leaf rotated,
+  revealed a page nobody had dissolved, and dust-in then masked it away, so the
+  ink appeared and then vanished before assembling.
+*/
+.dust-hidden{visibility:hidden}
+
+.dust-out,.dust-in{
+  -webkit-mask-repeat:repeat,no-repeat;mask-repeat:repeat,no-repeat;
+  -webkit-mask-size:auto,100% 100%;mask-size:auto,100% 100%;
+  /* the top layer intersects the sweep; the sweep itself composites onto
+     nothing, so it has to be `add` or the whole mask resolves to transparent */
+  -webkit-mask-composite:source-in,source-over;
+  mask-composite:intersect,add;
+}
+
+/* ink leaves, left to right, shredding into specks that drift up and away */
+.dust-out{
+  --dust-mask:
+    repeating-linear-gradient(96deg,
+      rgba(0,0,0,var(--grain)) 0 4px,#000 4px 7px,
+      rgba(0,0,0,var(--grain)) 7px 10px,#000 10px 15px),
+    linear-gradient(90deg,transparent 0%,transparent var(--dust),#000 calc(var(--dust) + 18%));
+  -webkit-mask-image:var(--dust-mask);mask-image:var(--dust-mask);
+  animation:dustOut .72s ease-in both;
+}
+@keyframes dustOut{
+  0%{--dust:-18%;--grain:1;-webkit-mask-position:0 0,0 0;mask-position:0 0,0 0}
+  100%{--dust:118%;--grain:.04;-webkit-mask-position:34px -22px,0 0;mask-position:34px -22px,0 0}
+}
+
+/* and the reverse on arrival, taken slower because this is the one you watch */
+.dust-in{
+  --dust-mask:
+    repeating-linear-gradient(96deg,
+      rgba(0,0,0,var(--grain)) 0 4px,#000 4px 7px,
+      rgba(0,0,0,var(--grain)) 7px 10px,#000 10px 15px),
+    linear-gradient(90deg,#000 0%,#000 var(--dust),transparent calc(var(--dust) + 18%));
+  -webkit-mask-image:var(--dust-mask);mask-image:var(--dust-mask);
+  animation:dustIn 1.5s cubic-bezier(.25,.6,.25,1) both;
+}
+@keyframes dustIn{
+  0%{--dust:-18%;--grain:.04;-webkit-mask-position:-34px -22px,0 0;mask-position:-34px -22px,0 0}
+  100%{--dust:122%;--grain:1;-webkit-mask-position:0 0,0 0;mask-position:0 0,0 0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .shade::before{display:none}
+  .dust-out,.dust-in{animation:none;-webkit-mask-image:none;mask-image:none}
+}
+.edge{position:absolute;top:0;bottom:0;width:calc(26px*var(--s));border:0;padding:0;background:transparent;z-index:4;cursor:var(--cur-act),pointer}
 .edge.next{right:0}.edge.prev{left:0}
-.edge.next:hover{background:linear-gradient(90deg,transparent,rgba(90,40,110,.14))}
-.edge.prev:hover{background:linear-gradient(270deg,transparent,rgba(90,40,110,.14))}
+.edge.next:hover{background:linear-gradient(90deg,transparent,rgba(107,58,168,.16))}
+.edge.prev:hover{background:linear-gradient(270deg,transparent,rgba(107,58,168,.16))}
 
 /* ---------- Bookmarks ---------- */
 .tabs{position:absolute;left:100%;top:8%;display:flex;flex-direction:column;gap:12px;z-index:0}
 .tab{
-  display:flex;align-items:center;gap:9px;height:46px;width:116px;padding:0 24px 0 24px;border:0;
-  background:var(--tc);color:var(--tt);font:700 13px var(--sans);text-align:left;
+  display:flex;align-items:center;gap:9px;height:48px;width:122px;padding:0 24px;border:0;
+  background:var(--tc);color:var(--tt);font:700 13.5px var(--sans);text-align:left;letter-spacing:.015em;
   clip-path:polygon(0 0,100% 0,calc(100% - 13px) 50%,100% 100%,0 100%);
   transform:translateX(-16px);transition:transform .25s,filter .25s;
 }
 .tab:hover{transform:translateX(-4px)}
-.tab.active{transform:translateX(6px);filter:brightness(1.1)}
-.tab:focus-visible{outline:none;box-shadow:inset 0 0 0 3px #fff}
-.tab-e{font-size:17px}
+.tab.active{transform:translateX(6px);filter:brightness(1.12)}
+.tab:focus-visible{outline:none;box-shadow:inset 0 0 0 3px #fffafd}
+.tab-e{font-size:16px;opacity:.9}
 .tab-s{display:none}
 .book-shell.single .tabs{left:0;right:0;top:auto;bottom:100%;margin-bottom:-14px;flex-direction:row;justify-content:center;gap:6px}
 .book-shell.single .tab{
@@ -103,104 +306,164 @@
 
 /* ---------- Pages ---------- */
 .page{
-  position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;gap:.6em;
+  position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;gap:.62em;
   padding:calc(30px*var(--s)) calc(30px*var(--s)) calc(26px*var(--s));
-  font-family:var(--serif);font-size:calc(16px*var(--s));line-height:1.5;color:var(--paper-ink);
+  font-family:var(--serif);font-size:calc(17.5px*var(--s));line-height:1.55;color:var(--paper-ink);
+  font-variation-settings:var(--fvs-body);
 }
 .face.front .page{padding-left:calc(40px*var(--s))}
 .face.back .page{padding-right:calc(40px*var(--s))}
 .page-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+/* a filing tab, squared off, not a floating lozenge */
 .chip{
-  display:inline-block;padding:.2em .85em;border-radius:999px;background:var(--ac-soft);color:var(--ac-deep);
-  font-family:var(--sans);font-weight:700;font-size:max(11.5px,.78em);line-height:1.5;
+  display:inline-block;padding:.24em .8em;border-radius:3px;background:var(--ac-soft);color:var(--ac-deep);
+  font-family:var(--sans);font-weight:700;font-size:max(12.5px,.76em);line-height:1.5;letter-spacing:.055em;text-transform:uppercase;
 }
-.count{font:600 max(11.5px,.78em) var(--sans);color:var(--paper-soft)}
-.pg-title{margin:0;font:italic 600 1.7em/1.1 var(--serif);color:var(--ac-deep)}
-.pg-desc{margin:0;font-size:.92em;color:var(--paper-soft)}
-.scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:.4em;scrollbar-width:thin;scrollbar-color:var(--ac) transparent}
+.count{font:600 max(12.5px,.76em) var(--sans);color:var(--paper-soft);letter-spacing:.03em}
+.pg-title{margin:0;font:italic 600 1.95em/1.08 var(--serif);font-variation-settings:var(--fvs-title);color:var(--ac-deep);letter-spacing:-.015em}
+.pg-desc{margin:0;font-size:.95em;font-style:italic;color:var(--paper-soft)}
+.scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:.4em}
 .page-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
 .btn{
-  padding:.5em 1.05em;border-radius:999px;border:1.5px solid var(--ac,#999);background:transparent;color:var(--ac-deep,#333);
-  font-family:var(--sans);font-weight:700;font-size:max(12px,.82em);line-height:1.3;transition:transform .2s,background .2s;
+  padding:.52em 1.1em;border-radius:6px;border:1.5px solid var(--ac,#999);background:transparent;color:var(--ac-deep,#333);
+  font-family:var(--sans);font-weight:700;font-size:max(13px,.8em);line-height:1.3;letter-spacing:.012em;
+  transition:transform .2s,background .2s;
 }
 .btn:hover{transform:translateY(-1px);background:var(--ac-soft)}
-.btn.solid{background:var(--ac-deep);border-color:transparent;color:#fff}
-.btn.solid:hover{background:var(--ac-deep);filter:brightness(1.1)}
-.btn.ghost{border-color:transparent;color:var(--paper-soft)}
-.btn.ghost:hover{background:rgba(0,0,0,.05)}
-.btn.armed{background:#b3261e;border-color:transparent;color:#fff}
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7em;text-align:center;padding:0 6%}
+.btn.solid{background:var(--ac-deep);border-color:transparent;color:#fffafd}
+.btn.solid:hover{background:var(--ac-deep);filter:brightness(1.12)}
+.btn.ghost{border-color:transparent;color:var(--paper-soft);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.btn.ghost:hover{background:rgba(48,28,54,.055)}
+.btn.armed,.btn.armed:hover{background:#9c3a2e;border-color:transparent;color:#fff}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75em;text-align:center;padding:0 6%}
 .empty p{margin:0}
-.empty .soft{color:var(--paper-soft);font-size:.92em}
+.empty .soft{color:var(--paper-soft);font-size:1em;font-style:italic;line-height:1.5}
 
 /* cover */
 .face.tone-cover,.face.tone-back{overflow:hidden;background-color:#3c2055}
 .cover{
-  position:absolute;inset:0;display:grid;place-items:center;padding:8%;cursor:pointer;color:#f6e3b4;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),linear-gradient(105deg,#7d2749 0%,#55265f 48%,#2a3f88 100%);
+  position:absolute;inset:0;display:grid;place-items:center;padding:8%;cursor:var(--cur-act),pointer;color:#f6ead8;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),linear-gradient(108deg,var(--bind-1) 0%,var(--bind-2) 100%);
 }
-.cover.back-cover{cursor:default;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),linear-gradient(255deg,#7d2749 0%,#55265f 48%,#2a3f88 100%)}
-.cover::before{content:"";position:absolute;inset:5%;border:1.5px solid var(--gold);border-radius:6px;opacity:.9}
-.cover::after{content:"";position:absolute;inset:calc(5% + 8px);border:1px solid rgba(240,217,160,.45);border-radius:3px}
-.cover-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.7em;padding:0 4%}
-.cover-orn{font-size:calc(22px*var(--s));color:#ff9db9;text-shadow:0 0 14px rgba(255,150,190,.7)}
+.cover.back-cover{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),linear-gradient(252deg,var(--bind-1) 0%,var(--bind-2) 100%)}
+/* a blind-stamped double rule, the way a cloth binding is actually tooled */
+.cover::before{content:"";position:absolute;inset:5.5%;border:1px solid var(--brass);border-radius:2px;opacity:.72}
+.cover::after{content:"";position:absolute;inset:calc(5.5% + 5px);border:1px solid rgba(201,146,46,.26);border-radius:1px}
+.cover-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.62em;padding:0 4%}
+.cover-orn{font-size:calc(20px*var(--s));color:var(--brass);opacity:.9}
+/*
+  Brass foil, stamped. The gradient runs light-to-dark top-down like real foil
+  catching a single light source, rather than a three-stop rainbow.
+*/
 .cover-title{
-  margin:0;font-family:var(--serif);font-style:italic;font-weight:600;font-size:calc(58px*var(--s));line-height:1.02;
-  background:linear-gradient(180deg,#fdebbd,#d9ac55 58%,#f4d78f);-webkit-background-clip:text;background-clip:text;color:transparent;
+  margin:0;font-family:var(--serif);font-style:italic;font-weight:600;
+  font-size:calc(68px*var(--s));line-height:.98;letter-spacing:-.022em;
+  font-variation-settings:var(--fvs-display);
+  background:linear-gradient(176deg,#f6e9c4 2%,#c8a560 46%,#8a6d38 72%,#e4ce95 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.42));
 }
-.cover-names{margin:0;font:italic 400 calc(22px*var(--s))/1.2 var(--serif);display:flex;gap:.5em;align-items:baseline;flex-wrap:wrap;justify-content:center}
-.cover-names .nm-her{color:#ffc4d5}.cover-names .nm-his{color:#bcd3ff}.cover-names .amp{color:var(--gold)}
-.cover-sub{margin:0;font:400 calc(14px*var(--s)) var(--sans);color:rgba(246,227,180,.8)}
+.cover-names{margin:.1em 0 0;font:italic 400 calc(25px*var(--s))/1.25 var(--serif);font-variation-settings:var(--fvs-lede);display:flex;gap:.45em;align-items:baseline;flex-wrap:wrap;justify-content:center}
+/* on the cover each name is signed in that person's own hand */
+.cover-names .nm-her{color:#f8b8d2;font-family:var(--hand-girl);font-style:normal;font-size:1.16em}
+.cover-names .nm-his{color:#cbaaf0;font-family:var(--hand-boy);font-style:normal;font-size:1.16em}
+.cover-names .amp{color:#e8bb62;font-size:.86em}
+.cover-sub{margin:.15em 0 0;font:500 calc(14.5px*var(--s)) var(--sans);color:rgba(244,232,246,.72);letter-spacing:.14em;text-transform:uppercase}
 .cover-open{
-  margin-top:1.2em;padding:.65em 1.5em;border-radius:999px;border:1.5px solid var(--gold);background:rgba(255,255,255,.06);
-  color:#f6e3b4;font:700 calc(14px*var(--s)) var(--sans);animation:glowpulse 2.6s ease-in-out infinite;
+  margin-top:1.35em;padding:.72em 1.6em;border-radius:6px;border:1px solid var(--brass);background:rgba(244,232,246,.07);
+  color:#f0e6cf;font:700 calc(14.5px*var(--s)) var(--sans);letter-spacing:.03em;
+  animation:glowpulse 3.4s ease-in-out infinite;transition:background .25s;
 }
-.cover-open:hover{background:rgba(255,255,255,.16)}
-@keyframes glowpulse{0%,100%{box-shadow:0 0 0 0 rgba(240,217,160,0)}50%{box-shadow:0 0 22px 2px rgba(240,217,160,.45)}}
+.cover-open:hover{background:rgba(244,232,246,.17)}
+@keyframes glowpulse{0%,100%{box-shadow:0 0 0 0 rgba(201,146,46,0)}50%{box-shadow:0 0 18px 1px rgba(201,146,46,.4)}}
 
 /* belongs + contents */
-.belong{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5em;text-align:center}
-.belong .lead{font:italic 400 1em var(--serif);color:var(--paper-soft);margin:0}
-.belong .nm{font:italic 600 2.1em/1.05 var(--serif);margin:0;overflow-wrap:anywhere}
-.belong .nm.her{color:var(--rose-deep)}.belong .nm.his{color:var(--blue-deep)}
-.belong .amp{font:italic 400 1.5em var(--serif);color:var(--gold);margin:-.1em 0}
-.together{text-align:center;padding-top:.6em;border-top:1px dashed rgba(90,50,110,.25);margin-top:.6em;width:100%}
-.together .days{font:italic 600 2.4em/1 var(--serif);color:var(--rose-deep)}
-.together p{margin:.2em 0 0;font-size:.92em;color:var(--paper-soft)}
-.toc{display:flex;flex-direction:column;gap:.5em;flex:1;justify-content:center}
+.belong{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.42em;text-align:center}
+.belong .lead{font:italic 400 1.05em var(--serif);color:var(--paper-soft);margin:0;letter-spacing:.015em}
+.belong .nm{font:italic 600 2.45em/1.04 var(--serif);font-variation-settings:var(--fvs-display);margin:0;overflow-wrap:anywhere;letter-spacing:-.018em}
+.belong .nm.her{color:var(--rose-deep);font-family:var(--hand-girl);font-style:normal;font-weight:400;font-size:2.85em;line-height:1.14}
+.belong .nm.his{color:var(--blue-deep);font-family:var(--hand-boy);font-style:normal;font-weight:400;font-size:2.85em;line-height:1.14}
+.belong .amp{font:italic 400 1.5em var(--serif);color:var(--brass);margin:-.14em 0}
+.together{text-align:center;padding-top:.7em;border-top:1px solid rgba(201,146,46,.4);margin-top:.7em;width:100%}
+.together .days{font:italic 600 2.85em/1 var(--serif);font-variation-settings:var(--fvs-display);color:var(--rose-deep);letter-spacing:-.025em}
+.together p{margin:.22em 0 0;font:600 .8em var(--sans);color:var(--paper-soft);letter-spacing:.11em;text-transform:uppercase}
+.toc{display:flex;flex-direction:column;gap:.42em;flex:1;justify-content:center}
+/*
+  A ruled index line rather than a floating card. The brass rule on the left is
+  the hook; no box, no shadow, so it reads as part of the page.
+*/
 .toc-row{
-  display:flex;align-items:center;gap:.9em;text-align:left;width:100%;padding:.7em .9em;border-radius:14px;
-  background:rgba(255,255,255,.7);border:1.5px solid var(--ac-soft);transition:transform .2s,border-color .2s;
+  display:flex;align-items:center;gap:.85em;text-align:left;width:100%;padding:.62em .8em;border-radius:4px;
+  background:transparent;border:0;border-left:2px solid var(--ac-soft);
+  transition:transform .2s,border-color .2s,background .2s;
 }
-.toc-row:hover{transform:translateX(3px);border-color:var(--ac)}
-.toc-row .e{font-size:1.5em}
-.toc-row b{display:block;font:italic 600 1.15em/1.15 var(--serif);color:var(--ac-deep)}
-.toc-row span.d{font:400 .84em/1.3 var(--sans);color:var(--paper-soft)}
+.toc-row:hover{transform:translateX(4px);border-left-color:var(--ac);background:rgba(255,255,255,.55)}
+.toc-row .e{font-size:1.35em;opacity:.85}
+.toc-row b{display:block;font:italic 600 1.28em/1.14 var(--serif);font-variation-settings:var(--fvs-title);color:var(--ac-deep)}
+.toc-row span.d{font:400 .86em/1.35 var(--sans);color:var(--paper-soft)}
 
 /* stories */
-.story-title{margin:.15em 0 0;font:italic 600 1.65em/1.12 var(--serif);color:var(--ac-deep);overflow-wrap:anywhere}
-.story-date{margin:0;font:600 max(11.5px,.78em) var(--sans);color:var(--paper-soft)}
-.story-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
-.story-body::first-letter{font-size:2.5em;float:left;line-height:.85;padding:.06em .1em 0 0;color:var(--ac-deep);font-style:italic}
+.story-title{margin:.15em 0 0;font:italic 600 1.92em/1.1 var(--serif);font-variation-settings:var(--fvs-title);color:var(--ac-deep);overflow-wrap:anywhere;letter-spacing:-.016em}
+.story-date{margin:0;font:600 max(12.5px,.76em) var(--sans);color:var(--paper-soft);letter-spacing:.075em;text-transform:uppercase}
+/* the story itself is in the writer's own hand, set larger to carry it */
+.story-body{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--hand,var(--serif));font-size:1.3em;line-height:1.56;letter-spacing:.004em}
+/* a proper drop cap: three lines deep, brass, with the serif's own italic */
+.story-body::first-letter{
+  font-size:3.3em;float:left;line-height:.78;padding:.04em .08em 0 0;
+  color:var(--ac-deep);font-style:italic;font-weight:600;
+}
 
 /* photos */
 .pol-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:calc(14px*var(--s));padding:.3em .2em}
 .pol{
-  position:relative;display:flex;flex-direction:column;min-height:0;padding:6px 6px 0;border:0;background:#fff;text-align:center;
-  box-shadow:0 8px 18px rgba(60,20,80,.22);transform:rotate(var(--r));transition:transform .25s;
+  position:relative;display:flex;flex-direction:column;min-height:0;padding:7px 7px 0;border:0;background:#fffafd;text-align:center;
+  box-shadow:0 1px 2px rgba(48,28,54,.14),0 7px 16px rgba(48,28,54,.18);
+  transform:rotate(var(--r));transition:transform .25s,box-shadow .25s;
 }
-.pol:hover{transform:rotate(0) scale(1.03);z-index:2}
+.pol:hover{transform:rotate(0) scale(1.04);z-index:2;box-shadow:0 2px 4px rgba(48,28,54,.16),0 14px 28px rgba(48,28,54,.24)}
 .pol .pic{flex:1;min-height:0;background-size:cover;background-position:center;background-color:var(--ac-soft)}
-.pol .cap{flex:none;height:2.3em;display:flex;align-items:center;justify-content:center;padding:0 .3em;font:italic 400 .82em/1.15 var(--serif);color:var(--paper-ink);overflow:hidden}
-.pol.blank{background:transparent;box-shadow:none;border:2px dashed var(--ac-soft);color:var(--paper-soft);justify-content:center;align-items:center;font:italic 400 .85em var(--serif);pointer-events:none}
+.pol .cap{flex:none;height:2.4em;display:flex;align-items:center;justify-content:center;padding:0 .3em;font:italic 400 .88em/1.2 var(--serif);color:var(--paper-ink);overflow:hidden}
+.pol.blank{background:transparent;box-shadow:none;border:1.5px dashed var(--ac-soft);color:var(--paper-soft);justify-content:center;align-items:center;font:italic 400 .9em var(--serif);pointer-events:none}
 
 /* notes */
 .notes{display:flex;flex-direction:column;gap:.7em;padding:.2em .3em .4em}
-.note{position:relative;padding:.8em 1em .7em;border-radius:6px 14px 6px 14px;background:#fff;box-shadow:0 4px 12px rgba(60,20,80,.14);border-left:4px solid var(--ac);transform:rotate(var(--r))}
-.note p{margin:0;font:italic 400 1em/1.45 var(--serif);white-space:pre-wrap;overflow-wrap:anywhere}
-.note time{display:block;margin-top:.4em;font:600 .74em var(--sans);color:var(--paper-soft)}
-.note .x{position:absolute;right:6px;top:4px;border:0;background:transparent;color:var(--paper-soft);font-size:1.1em;line-height:1;padding:.1em .35em}
-.note .x.armed{background:#b3261e;color:#fff;border-radius:8px;font-size:.75em}
+.note{
+  position:relative;padding:.85em 1.05em .75em;border-radius:2px;background:#fffafd;
+  box-shadow:0 1px 2px rgba(48,28,54,.1),0 5px 14px rgba(48,28,54,.12);
+  border-left:3px solid var(--ac);transform:rotate(var(--r));
+}
+/* a love note is handwriting or it is nothing */
+.note p{margin:0;font:400 1.34em/1.42 var(--hand,var(--serif));white-space:pre-wrap;overflow-wrap:anywhere}
+.note time{display:block;margin-top:.5em;font:600 .74em var(--sans);color:var(--paper-soft);letter-spacing:.08em;text-transform:uppercase}
+.note .x{position:absolute;right:5px;top:3px;border:0;background:transparent;color:var(--paper-soft);font-size:1.15em;line-height:1;padding:.1em .35em;border-radius:4px}
+.note .x:hover{background:rgba(48,28,54,.07);color:var(--paper-ink)}
+.note .x.armed,.note .x.armed:hover{background:#9c3a2e;color:#fff;border-radius:4px;font-size:.75em}
+
+/*
+  Movies and Dates used to be built from ~40 inline style attributes in book.js,
+  which bypassed the tone tokens entirely and is why those two sections looked
+  like a different app. Same markup, real classes, so they inherit --ac like
+  every other page.
+*/
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7em;padding:.25em}
+.movie-card{display:flex;flex-direction:column;padding:.6em;gap:.45em}
+.movie-card .thumb{width:100%;height:140px;object-fit:cover;border-radius:2px;display:block;background:var(--ac-soft)}
+.movie-card .mt{margin:0;font:600 .92em/1.25 var(--sans);text-align:center;color:var(--paper-ink)}
+.movie-card .ml{font:600 .8em var(--sans);text-align:center;color:var(--ac-deep);text-decoration:underline;text-underline-offset:2px}
+.movie-card .mact{margin-top:auto;padding-top:.6em}
+.movie-card .mact .btn{width:100%;font-size:max(11.5px,.72em);padding:.45em}
+
+.date-row{display:flex;gap:1em;align-items:center;padding:.7em}
+.date-row .dthumb{flex:1;width:100%;height:100px;object-fit:cover;border-radius:2px;display:block;background:var(--ac-soft)}
+.date-row .dmeta{display:flex;flex-direction:column;align-items:center;gap:.6em;width:72px;flex:none}
+.date-row .dplay{
+  width:44px;height:44px;border-radius:50%;background:var(--ac-deep);color:#fffafd;
+  display:grid;place-items:center;text-decoration:none;font-size:17px;
+  box-shadow:0 3px 9px rgba(48,28,54,.22);transition:transform .2s;
+}
+.date-row .dplay:hover{transform:scale(1.07)}
+.date-row .dplay.off{background:transparent;box-shadow:none;pointer-events:none}
+.date-row .dwhen{font:700 .82em var(--sans);color:var(--paper-ink);text-align:center;letter-spacing:.02em}
 
 /* five bookmarks on a phone: stack icon over label */
 .book-shell.single .tab{flex-direction:column;gap:0;font-size:10px;padding-top:10px}

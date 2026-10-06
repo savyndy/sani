@@ -18,6 +18,8 @@ function openModal(title, html, onMount){
 function closeModal(){
   $('#modal').hidden = true; $('#mBody').innerHTML = '';
   $('#app').inert = false; $('#login').inert = false; $('#gamesScreen').inert = false;
+  /* discards any un-saved palette preview from the Settings modal */
+  if (typeof applyTheme === 'function') applyTheme();
   if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch(e){}
 }
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal' || e.target.closest('[data-close]')) closeModal(); });
@@ -28,6 +30,62 @@ function armed(btn, fn, label){
   btn.dataset.armed = '1'; btn._orig = btn.innerHTML; btn.classList.add('armed'); btn.innerHTML = label || 'Sure?';
   btn._t = setTimeout(() => { delete btn.dataset.armed; btn.classList.remove('armed'); btn.innerHTML = btn._orig; }, 2600);
 }
+
+/* ================= theme =================
+   db.theme is '' (follow the device), 'light' or 'dark'. The matching
+   data-theme attribute is also set by a tiny inline script in index.html so the
+   saved choice is already on <html> before the first paint. */
+function systemPrefersDark(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+function themeIsDark(){
+  return db.theme ? db.theme === 'dark' : systemPrefersDark();
+}
+function applyTheme(){
+  const root = document.documentElement;
+  if (db.theme) root.setAttribute('data-theme', db.theme);
+  else root.removeAttribute('data-theme');
+  const b = $('#btnTheme');
+  if (b){
+    const dark = themeIsDark();
+    b.textContent = dark ? 'Daylight' : 'Lamplight';
+    b.setAttribute('aria-pressed', String(dark));
+    b.title = dark ? 'Switch to the light palette' : 'Switch to the dark palette';
+  }
+  /* cursor.js and orb.js both read the palette off :root, so they have to be told
+     when it moves. Guarded because both load after this file. */
+  if (typeof window.refreshSparkleColours === 'function') window.refreshSparkleColours();
+  if (typeof window.refreshOrbColours === 'function') window.refreshOrbColours();
+}
+function toggleTheme(){
+  db.theme = themeIsDark() ? 'light' : 'dark';
+  saveData(); applyTheme();
+}
+$('#btnTheme').addEventListener('click', toggleTheme);
+/* if the choice is "follow the device", track the device changing its mind */
+if (window.matchMedia){
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const onChange = () => { if (!db.theme) applyTheme(); };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+}
+
+/* ================= narrow-screen menu ================= */
+/* Under 900px the side rail would sit on top of the single-page book, so it
+   collapses into this disclosure instead. See the media query in book.css. */
+const appEl = $('#app');
+function setMenu(open){
+  appEl.classList.toggle('menu-open', open);
+  $('#btnMenu').setAttribute('aria-expanded', String(open));
+}
+$('#btnMenu').addEventListener('click', e => { e.stopPropagation(); setMenu(!appEl.classList.contains('menu-open')); });
+$('#sideMenu').addEventListener('click', () => setMenu(false));
+document.addEventListener('click', e => {
+  if (!appEl.classList.contains('menu-open')) return;
+  if (e.target.closest('#sideMenu') || e.target.closest('#btnMenu')) return;
+  setMenu(false);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
 /* ================= sparkles + photo field ================= */
 (function makeSparkles(){
@@ -190,13 +248,48 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight'){ userTouched = true; goTo(book.c + 1); }
   if (e.key === 'ArrowLeft'){ userTouched = true; goTo(book.c - 1); }
 });
+/*
+  Drag a page sideways to turn it. This used to be touch only; mouse drags now
+  count too, which is why body carries user-select:none (otherwise dragging
+  across a story selects the paragraph instead of turning the leaf).
+
+  A drag that STARTS on something interactive is ignored, so pulling away from a
+  button cannot also flip the page out from under it.
+*/
+const NO_DRAG = 'button,a,input,textarea,select,[data-act],[data-nav],[data-tab],.scroll';
 let sx = 0, sy = 0, sTarget = null;
 $('#stage').addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; sTarget = e.target; });
 $('#stage').addEventListener('pointerup', e => {
-  if (!sTarget || /^(INPUT|TEXTAREA)$/.test(sTarget.tagName)) return;
+  const t = sTarget; sTarget = null;
+  if (!t || (t.closest && t.closest(NO_DRAG))) return;
   const dx = e.clientX - sx, dy = e.clientY - sy;
-  if (Math.abs(dx) > 70 && Math.abs(dy) < 50 && e.pointerType !== 'mouse'){ userTouched = true; goTo(book.c + (dx < 0 ? 1 : -1)); }
+  const far = e.pointerType === 'mouse' ? 90 : 70;
+  if (Math.abs(dx) > far && Math.abs(dy) < 60){ userTouched = true; goTo(book.c + (dx < 0 ? 1 : -1)); }
 });
+
+/*
+  Wheel over the book turns pages, but only when the thing under the pointer is
+  not itself scrollable. A long story body keeps its own scrolling until it hits
+  an end, and only then does the wheel pass through to the page turn.
+*/
+let wheelLock = false;
+$('#stage').addEventListener('wheel', e => {
+  if (!built || !$('#modal').hidden) return;
+  const sc = e.target.closest && e.target.closest('.scroll,.wy-body,.qz-area,.notes');
+  if (sc && sc.scrollHeight > sc.clientHeight + 1){
+    const up = e.deltaY < 0, atTop = sc.scrollTop <= 0;
+    const atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1;
+    if (!(up && atTop) && !(!up && atBottom)) return;
+  }
+  e.preventDefault();
+  if (wheelLock) return;
+  const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+  if (Math.abs(d) < 6) return;
+  wheelLock = true;
+  userTouched = true;
+  goTo(book.c + (d > 0 ? 1 : -1));
+  setTimeout(() => { wheelLock = false; }, 440);
+}, { passive:false });
 
 function onAction(t){
   const a = t.dataset.act, id = t.dataset.id, side = t.dataset.side;
@@ -356,16 +449,38 @@ function openSettings(){
     '<label class="m-field">The day you got together<input id="sSince" type="date" value="' + esc(db.since) + '"></label>' +
     '<label class="m-field">Secret word<input id="sSecret" type="text" maxlength="40" value="' + esc(db.secret) + '"></label>' +
     '<p class="m-hint">The secret word only keeps the login screen cozy. It is not real security, so keep private things off this page.</p>' +
+    '<div class="m-field" style="margin-bottom:6px">Palette</div>' +
+    '<div class="m-seg" role="group" aria-label="Palette">' +
+      ['', 'light', 'dark'].map(v =>
+        '<button type="button" data-theme-pick="' + v + '" aria-pressed="' + (db.theme === v) + '">' +
+        (v === '' ? 'Device' : v === 'light' ? 'Daylight' : 'Lamplight') + '</button>').join('') +
+    '</div>' +
+    '<label class="m-check"><input id="sHam" type="checkbox"' + (db.hamilton ? ' checked' : '') + '><span>Hamilton</span></label>' +
+    '<p class="m-hint">Puts a certain seven-time world champion on the bottom of the screen, driving back and forth. Entirely unnecessary.</p>' +
     '<div class="m-actions"><button class="m-btn" type="button" data-close>Cancel</button><button class="m-btn solid" type="button" id="sSave">Save settings</button></div>',
     root => {
+      let pickedTheme = db.theme;
+      root.addEventListener('click', e => {
+        const b = e.target.closest('[data-theme-pick]'); if (!b) return;
+        pickedTheme = b.dataset.themePick;
+        $$('[data-theme-pick]', root).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        /* preview only: db is not touched until Save, and closeModal re-applies
+           the stored value, so cancelling puts the old palette back */
+        if (pickedTheme) document.documentElement.setAttribute('data-theme', pickedTheme);
+        else document.documentElement.removeAttribute('data-theme');
+      });
       $('#sSave', root).addEventListener('click', () => {
+        db.theme = pickedTheme;
+        db.hamilton = $('#sHam', root).checked;
         db.names.her = $('#sHer', root).value.trim() || 'Her';
         db.names.his = $('#sHis', root).value.trim() || 'Him';
         db.since = $('#sSince', root).value || '';
         const sec = $('#sSecret', root).value.trim();
         if (sec && sec.toLowerCase() !== String(db.secret).toLowerCase()){ db.secret = sec; db.secretChanged = true; }
         else if (sec) db.secret = sec;
-        closeModal(); commit('Settings saved.'); resetOrbHint();
+        closeModal(); applyTheme();
+        if (typeof window.refreshHamilton === 'function') refreshHamilton();
+        commit('Settings saved.'); resetOrbHint();
       });
     });
 }
@@ -420,8 +535,12 @@ window.addEventListener('resize', () => {
 
 /* ================= init ================= */
 seed();
+applyTheme();
 buildPhotoField();
 updateLoginTools();
 resetOrbHint();
 $('#inName').value = db.me || '';
-setTimeout(() => { try { $('#inName').focus({ preventScroll:true }); } catch(e){} }, 400);
+/* the intro overlay owns the screen first, so wait for it before taking focus */
+function focusName(){ try { $('#inName').focus({ preventScroll:true }); } catch(e){} }
+if (window.INTRO_ACTIVE) window.addEventListener('intro:done', () => setTimeout(focusName, 500), { once:true });
+else setTimeout(focusName, 400);

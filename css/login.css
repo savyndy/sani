@@ -1,23 +1,31 @@
 /* ---------- Login ---------- */
 #login{display:grid;place-items:center;overflow:hidden}
 .photo-field{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+/*
+  These are print-like keepsakes, so they get a deckled white border and a real
+  drop shadow rather than a glow. The dissolve animates opacity and transform
+  only: the old keyframes tweened filter:blur(18px) -> 0 -> blur(22px) on eight
+  elements at once, and an animated blur is repainted every frame rather than
+  being handed to the compositor. That was the main cost on this screen.
+*/
 .ph{
-  position:absolute;left:0;top:0;width:var(--w);padding:7px 7px 22px;background:#fff;border-radius:3px;
-  box-shadow:0 16px 40px rgba(60,20,80,.32);opacity:0;will-change:opacity,filter,transform;
+  position:absolute;left:0;top:0;width:var(--w);padding:8px 8px 26px;background:#fffafd;border-radius:2px;
+  box-shadow:0 2px 3px rgba(48,28,54,.14),0 14px 32px rgba(48,28,54,.22);
+  opacity:0;will-change:opacity,transform;
   transform:translate(var(--x),var(--y)) rotate(var(--r));
   animation:dissolve var(--dur) ease-in-out var(--delay) both;
 }
-.ph .pic{aspect-ratio:4/5;background-size:cover;background-position:center;border-radius:2px;display:grid;place-items:center}
-.ph .pic.empty{color:rgba(255,255,255,.85);font-size:calc(var(--w)*.28)}
-.ph .pic.empty::after{content:"\2665"}
-.ph .pic.tone-rose{background:linear-gradient(160deg,#ffc6d5,#e8718c 58%,#b64a86)}
-.ph .pic.tone-blue{background:linear-gradient(160deg,#cfe0ff,#5b8af0 58%,#5a4bb8)}
+.ph .pic{aspect-ratio:4/5;background-size:cover;background-position:center;border-radius:1px;display:grid;place-items:center}
+.ph .pic.empty{color:rgba(255,250,253,.9);font-size:calc(var(--w)*.26)}
+.ph .pic.empty::after{content:"\2740"}
+.ph .pic.tone-rose{background:linear-gradient(165deg,#f093b8,#a82e62 68%)}
+.ph .pic.tone-blue{background:linear-gradient(165deg,#b98ce8,#5e3298 68%)}
 .off .ph{animation-play-state:paused}
 @keyframes dissolve{
-  0%{opacity:0;filter:blur(18px) saturate(1.6);transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(.94)}
-  18%{opacity:.93;filter:blur(0) saturate(1)}
-  72%{opacity:.93;filter:blur(0) saturate(1)}
-  100%{opacity:0;filter:blur(22px) saturate(1.5);transform:translate(calc(var(--x) + var(--dx)),calc(var(--y) + var(--dy))) rotate(calc(var(--r) + 5deg)) scale(1.08)}
+  0%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(.96)}
+  16%{opacity:.95}
+  74%{opacity:.95}
+  100%{opacity:0;transform:translate(calc(var(--x) + var(--dx)),calc(var(--y) + var(--dy))) rotate(calc(var(--r) + 4deg)) scale(1.06)}
 }
 
 .orb-wrap{
@@ -28,64 +36,129 @@
 .orb-wrap.burst{transform:scale(1.14);filter:brightness(1.25)}
 .orb-wrap.shake{animation:shake .45s}
 @keyframes shake{20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+/*
+  Overlapping pink and violet blooms rather than a spinning rainbow conic. The
+  old conic cycled through every hue, which is what made it read as generic
+  "magic"; staying inside one family reads as light through stained glass.
+*/
 .orb-glow{
-  position:absolute;inset:-14%;border-radius:50%;
-  background:conic-gradient(from 0deg,#ff86ad,#c3a6ff,#6f9cff,#c3a6ff,#ff86ad);
-  filter:blur(34px);opacity:.85;animation:spin 16s linear infinite;
+  position:absolute;inset:-12%;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,rgba(212,88,138,.8),transparent 56%),
+             radial-gradient(circle at 70% 70%,rgba(160,106,216,.76),transparent 58%),
+             radial-gradient(circle at 50% 96%,rgba(232,120,168,.55),transparent 54%);
+  filter:blur(28px);opacity:.92;animation:spin 34s linear infinite;
 }
-.orb-glow.two{inset:-3%;filter:blur(14px);opacity:.55;animation-duration:24s;animation-direction:reverse}
+.orb-glow.two{
+  inset:-2%;filter:blur(13px);opacity:.7;animation-duration:48s;animation-direction:reverse;
+  background:radial-gradient(circle at 72% 26%,rgba(201,146,46,.6),transparent 52%),
+             radial-gradient(circle at 24% 74%,rgba(183,138,228,.5),transparent 50%);
+}
 @keyframes spin{to{transform:rotate(360deg)}}
+/*
+  `breathe` scaled this element while backdrop-filter was active, which forces the
+  browser to re-read and re-blur everything behind it every single frame. The
+  breathing now lives on an inset pseudo-element that carries no backdrop-filter,
+  so the glass surface stays put and only a cheap inner highlight moves.
+*/
 .orb{
   position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.6),transparent 46%),var(--orb-fill);
-  -webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);
+  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.55),transparent 48%),var(--orb-fill);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);backdrop-filter:blur(18px) saturate(1.15);
   border:1.5px solid var(--orb-edge);
-  box-shadow:inset 0 0 60px rgba(255,255,255,.3),inset 0 -34px 60px rgba(130,90,210,.22),0 0 90px rgba(210,120,225,.35);
-  display:grid;place-items:center;animation:breathe 7s ease-in-out infinite;
+  box-shadow:
+    inset 0 0 50px rgba(255,255,255,.3),
+    inset 0 -30px 56px rgba(107,58,168,.26),
+    0 0 80px rgba(212,88,138,.42);
+  display:grid;place-items:center;
 }
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.018)}}
+.orb::before{
+  content:"";position:absolute;inset:7%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.3),transparent 52%);
+  animation:breathe 9s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.035);opacity:1}}
+/* ---------- WebGL orb ---------- */
+/*
+  orb.js adds `.gl` to .orb-wrap only once the context exists AND the shader has
+  compiled and linked. Everything below is scoped to that class, so any failure
+  silently leaves the CSS orb above exactly as it was.
+
+  When the shader is live the CSS sphere has to get out of its way completely:
+  the two blurred gradient halos, the glass fill, the border, the inner
+  highlight. Leaving any of them on reads as two overlapping orbs.
+*/
+#orbCanvas{position:absolute;inset:-13%;width:126%;height:126%;pointer-events:none;z-index:0}
+.orb-wrap.gl .orb-glow{display:none}
+.orb-wrap.gl .orb{
+  background:none;border-color:transparent;box-shadow:none;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+.orb-wrap.gl .orb::before{display:none}
+/*
+  The shader is bright and busy, and the sign-in form sits on top of it. This is
+  a soft plate behind the form so the type keeps its contrast; --card is already
+  theme-aware, so it darkens with the palette.
+*/
+.orb-wrap.gl .orb-face{z-index:1}
+.orb-wrap.gl .orb-face::before{
+  content:"";position:absolute;inset:-16% -14%;z-index:-1;pointer-events:none;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center,var(--card) 0 42%,transparent 78%);
+}
+.orb-wrap.gl .orb-loading{z-index:1}
+
 .orb-face{
   position:absolute;width:62%;left:19%;top:50%;transform:translateY(-50%);
   display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
   transition:opacity .5s,transform .5s;
 }
 .orb-face.gone{opacity:0;transform:translateY(-50%) scale(.9);pointer-events:none}
-.orb-title{margin:0;font:italic 600 clamp(30px,calc(var(--orb)*.115),44px)/1 var(--serif);color:var(--ink);letter-spacing:.005em}
-.orb-sub{margin:0 0 6px;font:400 italic 14px/1.2 var(--serif);color:var(--ink-soft)}
+.orb-title{
+  margin:0;font:italic 600 clamp(36px,calc(var(--orb)*.136),56px)/.98 var(--serif);
+  font-variation-settings:var(--fvs-display);color:var(--ink);letter-spacing:-.012em;
+}
+.orb-sub{
+  margin:0 0 10px;font:italic 400 17px/1.25 var(--serif);font-variation-settings:var(--fvs-lede);
+  color:var(--ink-soft);letter-spacing:.012em;
+}
 .field{
-  width:100%;padding:10px 14px;border-radius:999px;border:1px solid var(--orb-edge);
-  background:var(--field-bg);color:var(--field-ink);font:600 15px var(--sans);text-align:center;outline:none;
+  width:100%;padding:12px 16px;border-radius:8px;border:1.5px solid var(--orb-edge);
+  background:var(--field-bg);color:var(--field-ink);font:500 16.5px var(--sans);text-align:center;outline:none;
+  transition:border-color .2s,box-shadow .2s;
 }
-.field::placeholder{color:var(--ink-soft);opacity:.85}
-.field:focus-visible{outline:none;box-shadow:0 0 0 3px var(--focus)}
+.field::placeholder{color:var(--ink-soft);opacity:.8;font-style:italic}
+.field:focus-visible{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 30%,transparent)}
+/* flat violet with a gold hairline, no gradient */
 .go{
-  width:100%;margin-top:2px;padding:11px 14px;border:0;border-radius:999px;color:#fff;font:700 15px var(--sans);
-  background:linear-gradient(100deg,#c4426b,#7a58c8 55%,#3f68cf);box-shadow:0 8px 22px rgba(120,70,200,.4);
-  transition:transform .2s,box-shadow .2s;
+  width:100%;margin-top:4px;padding:13px 16px;border:0;border-radius:8px;color:#fffafd;
+  font:700 16.5px var(--sans);letter-spacing:.015em;
+  background:var(--iris-deep);
+  box-shadow:inset 0 0 0 1px rgba(201,146,46,.55),0 6px 18px rgba(58,35,64,.26);
+  transition:transform .2s,box-shadow .2s,background .2s;
 }
-.go:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(120,70,200,.5)}
-.orb-msg{margin:2px 0 0;min-height:2.6em;font:600 12px/1.3 var(--sans);color:var(--ink-soft)}
-.orb-msg.err{color:var(--rose-deep)}
-:root[data-theme="dark"] .orb-msg.err{color:#ffb3c6}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .orb-msg.err{color:#ffb3c6}}
+.go:hover{transform:translateY(-1px);background:var(--iris-press);box-shadow:inset 0 0 0 1px rgba(201,146,46,.9),0 10px 24px rgba(58,35,64,.32)}
+.orb-msg{margin:4px 0 0;min-height:2.6em;font:500 13.5px/1.4 var(--sans);color:var(--ink-soft)}
+.orb-msg.err{color:var(--rose-deep);font-weight:700}
+:root[data-theme="dark"] .orb-msg.err{color:#e0a3ae}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .orb-msg.err{color:#e0a3ae}}
 
 .orb-loading{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   opacity:0;pointer-events:none;transition:opacity .6s .2s;text-align:center;padding:0 16%;
 }
 .orb-loading.on{opacity:1}
-.orb-loading .lh{font-size:34px;color:var(--rose);animation:beat 1.1s ease-in-out infinite}
+.orb-loading .lh{font-size:32px;color:var(--rose);animation:beat 1.1s ease-in-out infinite}
 @keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.22)}60%{transform:scale(.96)}}
-.orb-loading .lm{font:italic 400 18px/1.25 var(--serif);color:var(--ink)}
-.orb-loading .lp{font:700 12px var(--sans);color:var(--ink-soft)}
+.orb-loading .lm{font:italic 400 21px/1.3 var(--serif);font-variation-settings:var(--fvs-lede);color:var(--ink)}
+.orb-loading .lp{font:700 13px var(--sans);color:var(--ink-soft);letter-spacing:.07em}
 .ring{position:absolute;left:-7%;top:-7%;width:114%;height:114%;transform:rotate(-90deg);opacity:0;transition:opacity .5s;pointer-events:none}
 .orb-wrap.loading .ring{opacity:1}
 .ring circle{fill:none;stroke-width:1.5;stroke-linecap:round}
-.ring .track{stroke:rgba(255,255,255,.35)}
-.ring .prog{stroke:url(#ringGrad);stroke-dasharray:301.6;stroke-dashoffset:301.6;filter:drop-shadow(0 0 2.5px rgba(255,255,255,.95))}
+.ring .track{stroke:rgba(160,106,216,.28)}
+.ring .prog{stroke:url(#ringGrad);stroke-dasharray:301.6;stroke-dashoffset:301.6;filter:drop-shadow(0 0 2.5px rgba(212,88,138,.85))}
 .ring-dot{
-  position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;
-  background:#fff;box-shadow:0 0 14px 5px rgba(255,255,255,.95),0 0 30px 10px rgba(190,140,255,.7);opacity:0;transition:opacity .4s;pointer-events:none;
+  position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;
+  background:#fffafd;box-shadow:0 0 12px 4px rgba(255,250,253,.9),0 0 26px 9px rgba(212,88,138,.6);opacity:0;transition:opacity .4s;pointer-events:none;
 }
 .orb-wrap.loading .ring-dot{opacity:1}
 
@@ -93,12 +166,20 @@
   position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;
   display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;padding:0 16px;
 }
+/*
+  Pills lost their backdrop-filter. There can be a dozen on screen at once and
+  each one was its own blurred backdrop read; an opaque card background is
+  visually near-identical here and costs nothing.
+*/
 .pill{
-  display:inline-flex;align-items:center;gap:.5em;padding:.55em 1.05em;border-radius:999px;
-  background:var(--card);border:1px solid var(--line);color:var(--ink);font:700 13px var(--sans);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:transform .2s,border-color .2s,opacity .2s;
+  display:inline-flex;align-items:center;gap:.5em;padding:.58em 1.1em;border-radius:7px;
+  background:var(--card);border:1px solid var(--line);color:var(--ink);
+  font:700 14px var(--sans);letter-spacing:.01em;
+  transition:transform .2s,border-color .2s,background .2s,opacity .2s;
 }
-.pill:hover:not(:disabled){transform:translateY(-1px);border-color:var(--rose)}
-.pill:disabled{opacity:.4;cursor:default}
-.pill.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);text-decoration:underline}
+.pill:hover:not(:disabled){transform:translateY(-1px);border-color:var(--iris);background:var(--iris-soft)}
+.pill:disabled{opacity:.42;cursor:var(--cur-idle),default}
+.pill.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.pill.quiet:hover:not(:disabled){background:transparent;border-color:transparent;color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--iris-deep);border-color:transparent;color:#fffafd}
 

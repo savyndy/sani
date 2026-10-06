@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two Hands</title>
+<link rel="stylesheet" href="../css/hands.css">
+<style>
+  :root{
+    --ink:#3a2340; --soft:#6e5578; --rose:#d4588a; --iris:#a06ad8;
+    --paper:#fff4f8; --line:rgba(160,106,216,.22);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:48px 24px 96px;
+    background:linear-gradient(170deg,#f9cfe2,#fbe9f1 45%,#e2d2f5);
+    color:var(--ink);
+    font:400 17px/1.6 Manrope,system-ui,sans-serif;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  h1{
+    font-family:var(--hand-girl); font-weight:400;
+    font-size:clamp(44px,8vw,78px); margin:0 0 6px; letter-spacing:.01em;
+  }
+  .sub{color:var(--soft);margin:0 0 44px;font-style:italic;font-size:18px}
+
+  .card{
+    background:var(--paper); border-radius:22px; padding:34px 32px;
+    margin-bottom:28px; border:1px solid var(--line);
+    box-shadow:0 18px 44px -26px rgba(90,40,120,.55);
+  }
+  .tag{
+    display:inline-block; font-size:13px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--iris); font-weight:700;
+    margin-bottom:18px;
+  }
+  .big{font-size:clamp(38px,6.6vw,62px);line-height:1.25;margin:0 0 20px}
+  .mid{font-size:30px;line-height:1.45;margin:0 0 16px}
+  .set{font-size:26px;line-height:1.7;margin:0;color:var(--soft)}
+  .boy{font-family:var(--hand-boy)}
+  .girl{font-family:var(--hand-girl)}
+  .sizes p{margin:0 0 10px}
+  .note{
+    margin-top:40px;font-size:15px;color:var(--soft);
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+  code{
+    background:rgba(160,106,216,.12); padding:2px 7px; border-radius:6px;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Two hands</h1>
+  <p class="sub">Drawn from the note. One for each of you.</p>
+
+  <section class="card">
+    <span class="tag">Tharu Hand &middot; his</span>
+    <p class="big boy">I love my Sani &#9825;</p>
+    <p class="mid boy"><em>Leans forward, loops its <b>l</b>, keeps a loose
+      and easy rhythm.</em></p>
+    <p class="set boy">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+      abcdefghijklmnopqrstuvwxyz<br>
+      0123456789 &amp; . , ! ? ( ) &#9825; &#9829;</p>
+  </section>
+
+  <section class="card">
+    <span class="tag">Sani Hand &middot; hers</span>
+    <p class="big girl">I love my Tharu &#9825;</p>
+    <p class="mid girl"><em>Stands upright, rounder in the bowls, and bars
+      its capital <b>I</b> top and bottom.</em></p>
+    <p class="set girl">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+      abcdefghijklmnopqrstuvwxyz<br>
+      0123456789 &amp; . , ! ? ( ) &#9825; &#9829;</p>
+  </section>
+
+  <section class="card sizes">
+    <span class="tag">At reading sizes</span>
+    <p class="boy" style="font-size:40px">Always &amp; forever</p>
+    <p class="girl" style="font-size:40px">Always &amp; forever</p>
+    <p class="boy" style="font-size:26px">The quick brown fox jumps over the
+      lazy dog, 2026.</p>
+    <p class="girl" style="font-size:26px">The quick brown fox jumps over the
+      lazy dog, 2026.</p>
+    <p class="boy" style="font-size:19px">Pack my box with five dozen liquor
+      jugs. Pack my box with five dozen liquor jugs.</p>
+    <p class="girl" style="font-size:19px">Pack my box with five dozen liquor
+      jugs. Pack my box with five dozen liquor jugs.</p>
+  </section>
+
+  <p class="note">
+    Use them with <code>font-family:"Tharu Hand"</code> (his) and
+    <code>font-family:"Sani Hand"</code> (hers), or the helper classes
+    <code>.hand-boy</code> and <code>.hand-girl</code> from
+    <code>css/hands.css</code>. Both ship as <code>.woff2</code> for the web
+    and <code>.ttf</code> for installing on a machine.
+  </p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+/* ---------- Intro: the pixel park ---------- */
+/*
+  The scene itself is all canvas, drawn by js/intro.js, so there is very little
+  for CSS to do here: hold the overlay above everything, keep the upscale from
+  being smoothed, and fade the pink off at the end.
+
+  `image-rendering` is listed twice on purpose. `crisp-edges` comes first as the
+  older spelling some engines still want; `pixelated` follows so it wins
+  wherever it is understood. Without one of them the browser bilinearly filters
+  the 256x144 buffer on the way up and every pixel turns to mush.
+*/
+#intro{
+  position:fixed;inset:0;z-index:9990;
+  overflow:hidden;
+  background:#140a1e;
+}
+#intro.gone{display:none}
+
+#introCanvas{
+  display:block;width:100%;height:100%;
+  image-rendering:crisp-edges;
+  image-rendering:pixelated;
+}
+
+/* the heart has filled the screen; lift the pink off and let the login through */
+#intro.fading{
+  opacity:0;
+  transition:opacity .8s ease-in;
+  pointer-events:none;
+}
+
+/* ---------- Staggered reveal once the pink clears ---------- */
+/*
+  --i is the position in the sequence, set per element below, so one keyframe
+  serves everything and the order is declared in one place.
+*/
+.reveal{opacity:0}
+body.revealed .reveal{
+  animation:riseIn .72s cubic-bezier(.22,1,.36,1) both;
+  animation-delay:calc(var(--i,0) * 110ms);
+}
+@keyframes riseIn{
+  from{opacity:0;transform:translateY(16px) scale(.97);filter:blur(5px)}
+  to{opacity:1;transform:none;filter:blur(0)}
+}
+
+#login .orb-wrap{--i:0}
+#login .orb-title{--i:1}
+#login .orb-sub{--i:2}
+#login #inName{--i:3}
+#login #inPass{--i:4}
+#login #btnEnter{--i:5}
+#login .login-tools{--i:6}
+
+@media (prefers-reduced-motion:reduce){
+  #intro{display:none}
+  .reveal,body.revealed .reveal{opacity:1;animation:none}
+}
