@@ -210,7 +210,7 @@ let activeGame = null;
 function buildGameGrid(){
   $('#gamesContainer').innerHTML = GAMES.map(g =>
     '<button class="game-card" type="button" data-game="' + g.id + '"' +
-    ' style="--art-a:' + g.a + ';--art-b:' + g.b + ';--icon:url(img/icons/' + g.id + '.svg)">' +
+    ' style="--art-a:' + g.a + ';--art-b:' + g.b + '">' +
     '<span class="game-art" aria-hidden="true"><i></i></span>' +
     '<span class="game-blurb">' + esc(g.blurb) + '</span><span class="game-title">' + esc(g.title) + '</span></button>').join('');
 }

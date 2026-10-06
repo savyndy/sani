@@ -82,19 +82,32 @@
   /* Longhands rather than the shorthand: the position/size syntax inside the
      prefixed `-webkit-mask` shorthand is the least portable part of masking,
      and the icons are white so either mask-mode, alpha or luminance, resolves
-     them the same way. */
-  -webkit-mask-image:var(--icon);          mask-image:var(--icon);
+     them the same way.
+
+     The mask-image itself is set per game below rather than passed in through
+     a custom property. A relative url() inside a custom property resolves
+     against the stylesheet that DECLARED it, and these were declared in an
+     inline style attribute, which is a corner browsers disagree on. Written
+     here, the path resolves against this file and simply works. */
   -webkit-mask-repeat:no-repeat;           mask-repeat:no-repeat;
   -webkit-mask-position:center;            mask-position:center;
   -webkit-mask-size:contain;               mask-size:contain;
   filter:drop-shadow(0 2px 0 rgba(255,255,255,.5));
   transition:transform .4s cubic-bezier(.22,1,.36,1);
 }
+
+/* the mark on each card, resolved against this stylesheet */
+.game-card[data-game="memory"] .game-art i{-webkit-mask-image:url(../img/icons/memory.svg);mask-image:url(../img/icons/memory.svg)}
+.game-card[data-game="wyr"] .game-art i{-webkit-mask-image:url(../img/icons/wyr.svg);mask-image:url(../img/icons/wyr.svg)}
+.game-card[data-game="quiz"] .game-art i{-webkit-mask-image:url(../img/icons/quiz.svg);mask-image:url(../img/icons/quiz.svg)}
+.game-card[data-game="hearts"] .game-art i{-webkit-mask-image:url(../img/icons/hearts.svg);mask-image:url(../img/icons/hearts.svg)}
+.game-card[data-game="scratch"] .game-art i{-webkit-mask-image:url(../img/icons/scratch.svg);mask-image:url(../img/icons/scratch.svg)}
+.game-card[data-game="wheel"] .game-art i{-webkit-mask-image:url(../img/icons/wheel.svg);mask-image:url(../img/icons/wheel.svg)}
+.game-card[data-game="ttt"] .game-art i{-webkit-mask-image:url(../img/icons/ttt.svg);mask-image:url(../img/icons/ttt.svg)}
+.game-card[data-game="draw"] .game-art i{-webkit-mask-image:url(../img/icons/draw.svg);mask-image:url(../img/icons/draw.svg)}
+.game-card[data-game="aura"] .game-art i{-webkit-mask-image:url(../img/icons/aura.svg);mask-image:url(../img/icons/aura.svg)}
+.game-card[data-game="hoops"] .game-art i{-webkit-mask-image:url(../img/icons/hoops.svg);mask-image:url(../img/icons/hoops.svg)}
 .game-card:hover .game-art i{transform:translateY(-5px) scale(1.07)}
-/* without mask support the plate would show a solid ink block, so show none */
-@supports not ((-webkit-mask-image:url(#i)) or (mask-image:url(#i))){
-  .game-art i{display:none}
-}
 .game-blurb{font:400 14.5px/1.42 var(--sans);color:var(--ink-soft);text-align:center}
 .game-title{
   background:transparent;color:var(--ink);padding:9px 6px 4px;border-top:1px solid var(--line);
