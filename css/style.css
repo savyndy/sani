@@ -93,9 +93,19 @@
 
 /* ---------- Base ---------- */
 *{box-sizing:border-box}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+/*
+  The scrolling element is html, not body, which is why putting this on body
+  alone did not hold: the off screens sit at scale(1.05), ~34px past each edge,
+  and `overflow:hidden` hides that while still making a scroll container that
+  can be scrolled PROGRAMMATICALLY. Opening a game moves focus, the browser
+  scrolled sideways to reveal the overflow, and the whole layout shifted left
+  with the left edge clipped. `clip` makes no scrollport at all, so there is
+  nothing to scroll. `hidden` stays first as the fallback for older engines.
+*/
+html{height:100%;overflow:hidden;overflow:clip;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{
-  height:100%;margin:0;position:relative;overflow:hidden;
+  height:100%;margin:0;position:relative;
+  overflow:hidden;overflow:clip;   /* see the note on html above */
   font-family:var(--sans);color:var(--ink);font-size:16px;
   background:
     radial-gradient(1100px 800px at 12% 8%,var(--bg-1),transparent 62%),
